@@ -1,0 +1,11 @@
+/home/musclegear555/viber-tui/target/debug/deps/nucleo-f5526f0520b08a26.d: /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/lib.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/boxcar.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/par_sort.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/pattern.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/worker.rs
+
+/home/musclegear555/viber-tui/target/debug/deps/libnucleo-f5526f0520b08a26.rlib: /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/lib.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/boxcar.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/par_sort.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/pattern.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/worker.rs
+
+/home/musclegear555/viber-tui/target/debug/deps/libnucleo-f5526f0520b08a26.rmeta: /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/lib.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/boxcar.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/par_sort.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/pattern.rs /home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/worker.rs
+
+/home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/lib.rs:
+/home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/boxcar.rs:
+/home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/par_sort.rs:
+/home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/pattern.rs:
+/home/musclegear555/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nucleo-0.5.0/src/worker.rs:

@@ -1,0 +1,560 @@
+actions:
+  # ============================================================================
+  # MCPs - Model Context Protocol Tools
+  # ============================================================================
+  - id: mcp.ncp-coding
+    name: NCP Coding
+    category: mcp
+    subcategory: coding
+    description: Execute TypeScript with MCPs for coding tasks
+    keywords: [code, typescript, execute, ncp, github, linear]
+    invocation: ncp-coding_code
+    params:
+      - name: code
+        param_type: string
+        required: true
+        description: TypeScript code to execute
+
+  - id: mcp.ncp-research
+    name: NCP Research
+    category: mcp
+    subcategory: research
+    description: Research tools - Exa search, Context7, documentation
+    keywords: [research, search, docs, documentation, web]
+    invocation: ncp-research_code
+    params:
+      - name: code
+        param_type: string
+        required: true
+
+  - id: mcp.ncp-productivity
+    name: NCP Productivity
+    category: mcp
+    subcategory: productivity
+    description: Productivity tools - calendar, tasks, notes
+    keywords: [productivity, calendar, tasks, notes, todo]
+    invocation: ncp-productivity_code
+    params:
+      - name: code
+        param_type: string
+        required: true
+
+  - id: mcp.ncp-creative
+    name: NCP Creative
+    category: mcp
+    subcategory: creative
+    description: Creative tools - image generation, media processing
+    keywords: [creative, image, media, art, generate]
+    invocation: ncp-creative_code
+    params:
+      - name: code
+        param_type: string
+        required: true
+
+  - id: mcp.context7
+    name: Context7 Docs
+    category: mcp
+    subcategory: research
+    description: Query up-to-date library documentation
+    keywords: [docs, documentation, library, api, reference]
+    invocation: context7_query-docs
+    params:
+      - name: libraryId
+        param_type: string
+        required: true
+      - name: query
+        param_type: string
+        required: true
+
+  - id: mcp.grep-app
+    name: GitHub Code Search
+    category: mcp
+    subcategory: research
+    description: Search real-world code examples from GitHub
+    keywords: [github, search, code, examples, patterns]
+    invocation: grep_app_searchGitHub
+    params:
+      - name: query
+        param_type: string
+        required: true
+
+  - id: mcp.exa-search
+    name: Exa Web Search
+    category: mcp
+    subcategory: research
+    description: AI-powered web search with content scraping
+    keywords: [web, search, internet, exa, scrape]
+    invocation: websearch_exa_web_search_exa
+    params:
+      - name: query
+        param_type: string
+        required: true
+
+  - id: mcp.neovim
+    name: Neovim Integration
+    category: mcp
+    subcategory: coding
+    description: Control Neovim - buffers, LSP, navigation
+    keywords: [neovim, nvim, editor, vim, lsp]
+    invocation: neovim_nvim_exec_lua
+    params:
+      - name: code
+        param_type: string
+        required: true
+
+  - id: mcp.memcord
+    name: Memcord Memory
+    category: mcp
+    subcategory: productivity
+    description: Persistent AI memory across sessions
+    keywords: [memory, save, recall, context, persist]
+    invocation: memcord_save
+    params:
+      - name: content
+        param_type: string
+        required: true
+
+  - id: mcp.ast-grep
+    name: AST Grep
+    category: mcp
+    subcategory: coding
+    description: AST-aware code search and replace
+    keywords: [ast, search, replace, refactor, pattern]
+    invocation: ast_grep_search
+    params:
+      - name: pattern
+        param_type: string
+        required: true
+      - name: lang
+        param_type: string
+        required: true
+
+  - id: mcp.lsp-hover
+    name: LSP Hover Info
+    category: mcp
+    subcategory: coding
+    description: Get type info and docs for symbol at position
+    keywords: [lsp, type, hover, docs, symbol]
+    invocation: lsp_hover
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+      - name: line
+        param_type: number
+        required: true
+      - name: character
+        param_type: number
+        required: true
+
+  - id: mcp.lsp-references
+    name: LSP Find References
+    category: mcp
+    subcategory: coding
+    description: Find all usages of a symbol across workspace
+    keywords: [lsp, references, usages, find, symbol]
+    invocation: lsp_find_references
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+      - name: line
+        param_type: number
+        required: true
+      - name: character
+        param_type: number
+        required: true
+
+  - id: mcp.lsp-rename
+    name: LSP Rename Symbol
+    category: mcp
+    subcategory: coding
+    description: Rename symbol across entire workspace
+    keywords: [lsp, rename, refactor, symbol]
+    invocation: lsp_rename
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+      - name: line
+        param_type: number
+        required: true
+      - name: character
+        param_type: number
+        required: true
+      - name: newName
+        param_type: string
+        required: true
+
+  - id: mcp.background-task
+    name: Background Task
+    category: mcp
+    subcategory: agents
+    description: Run agent task in background, returns immediately
+    keywords: [background, async, agent, parallel]
+    invocation: background_task
+    params:
+      - name: prompt
+        param_type: string
+        required: true
+      - name: agent
+        param_type: string
+        required: true
+
+  - id: mcp.session-search
+    name: Session Search
+    category: mcp
+    subcategory: productivity
+    description: Search content within OpenCode sessions
+    keywords: [session, search, history, chat]
+    invocation: session_search
+    params:
+      - name: query
+        param_type: string
+        required: true
+
+  # ============================================================================
+  # Agents - Specialized AI Workers
+  # ============================================================================
+  - id: agent.explore
+    name: Explore Agent
+    category: agent
+    subcategory: research
+    description: Fast codebase exploration - find files, search code
+    keywords: [explore, search, find, codebase, files]
+    invocation: "call_omo_agent explore"
+
+  - id: agent.librarian
+    name: Librarian Agent
+    category: agent
+    subcategory: research
+    description: External documentation and best practices research
+    keywords: [docs, research, library, external, best-practices]
+    invocation: "call_omo_agent librarian"
+
+  - id: agent.general
+    name: General Agent
+    category: agent
+    subcategory: general
+    description: Multi-step tasks and complex research
+    keywords: [general, multi-step, complex, autonomous]
+    invocation: "task general"
+
+  - id: agent.code-reviewer
+    name: Code Reviewer
+    category: agent
+    subcategory: quality
+    description: Thorough code review for bugs, security, performance
+    keywords: [review, code, quality, security, bugs]
+    invocation: "task code-reviewer"
+
+  - id: agent.ui-engineer
+    name: UI Engineer
+    category: agent
+    subcategory: frontend
+    description: Frontend development, React, UI components
+    keywords: [ui, frontend, react, components, design]
+    invocation: "task ui-engineer"
+
+  - id: agent.debugger
+    name: Debugger Agent
+    category: agent
+    subcategory: coding
+    description: Complex issue diagnosis and root cause analysis
+    keywords: [debug, diagnose, error, bug, fix]
+    invocation: "task debugger"
+
+  - id: agent.backend-developer
+    name: Backend Developer
+    category: agent
+    subcategory: backend
+    description: APIs, databases, server-side development
+    keywords: [backend, api, server, database]
+    invocation: "task backend-developer"
+
+  - id: agent.typescript-pro
+    name: TypeScript Pro
+    category: agent
+    subcategory: coding
+    description: Advanced TypeScript, type system, build optimization
+    keywords: [typescript, types, ts, advanced]
+    invocation: "task typescript-pro"
+
+  - id: agent.python-pro
+    name: Python Pro
+    category: agent
+    subcategory: coding
+    description: Modern Python development, async, data science
+    keywords: [python, async, data, science]
+    invocation: "task python-pro"
+
+  - id: agent.rust-engineer
+    name: Rust Engineer
+    category: agent
+    subcategory: coding
+    description: Systems programming, memory safety, performance
+    keywords: [rust, systems, performance, memory]
+    invocation: "task rust-engineer"
+
+  - id: agent.devops-engineer
+    name: DevOps Engineer
+    category: agent
+    subcategory: infrastructure
+    description: CI/CD, Docker, Kubernetes, cloud platforms
+    keywords: [devops, ci, cd, docker, kubernetes, cloud]
+    invocation: "task devops-engineer"
+
+  - id: agent.security-engineer
+    name: Security Engineer
+    category: agent
+    subcategory: security
+    description: Security audits, vulnerability assessment
+    keywords: [security, audit, vulnerability, penetration]
+    invocation: "task security-engineer"
+
+  - id: agent.database-administrator
+    name: Database Administrator
+    category: agent
+    subcategory: database
+    description: Database optimization, queries, migrations
+    keywords: [database, sql, postgres, mysql, optimization]
+    invocation: "task database-administrator"
+
+  - id: agent.mcp-developer
+    name: MCP Developer
+    category: agent
+    subcategory: mcp
+    description: Build MCP servers and integrations
+    keywords: [mcp, server, protocol, integration]
+    invocation: "task mcp-developer"
+
+  - id: agent.test-automator
+    name: Test Automator
+    category: agent
+    subcategory: testing
+    description: Test frameworks, CI integration, coverage
+    keywords: [test, automation, ci, coverage, framework]
+    invocation: "task test-automator"
+
+  - id: agent.refactoring-specialist
+    name: Refactoring Specialist
+    category: agent
+    subcategory: coding
+    description: Safe code transformations, design patterns
+    keywords: [refactor, patterns, clean, transform]
+    invocation: "task refactoring-specialist"
+
+  # ============================================================================
+  # Skills - Specialized Knowledge & Workflows
+  # ============================================================================
+  - id: skill.planning
+    name: Planning Skill
+    category: skill
+    subcategory: workflow
+    description: Create comprehensive implementation plans
+    keywords: [plan, architecture, design, roadmap]
+    invocation: "/planning"
+
+  - id: skill.frontend-design
+    name: Frontend Design
+    category: skill
+    subcategory: frontend
+    description: High-quality UI components, modern patterns
+    keywords: [frontend, ui, design, components, react]
+    invocation: "/frontend-design"
+
+  - id: skill.mcp-builder
+    name: MCP Builder
+    category: skill
+    subcategory: mcp
+    description: Guide for creating MCP servers
+    keywords: [mcp, server, build, create, protocol]
+    invocation: "/mcp-builder"
+
+  - id: skill.playwright
+    name: Playwright Testing
+    category: skill
+    subcategory: testing
+    description: Browser automation and E2E testing
+    keywords: [playwright, browser, e2e, test, automation]
+    invocation: "/playwright"
+
+  - id: skill.ai-multimodal
+    name: AI Multimodal
+    category: skill
+    subcategory: ai
+    description: Process images, audio, video with Gemini
+    keywords: [ai, image, audio, video, gemini, multimodal]
+    invocation: "/ai-multimodal"
+
+  - id: skill.chrome-devtools
+    name: Chrome DevTools
+    category: skill
+    subcategory: debugging
+    description: Browser debugging, performance analysis
+    keywords: [chrome, devtools, debug, performance, browser]
+    invocation: "/chrome-devtools"
+
+  - id: skill.devops
+    name: DevOps Skill
+    category: skill
+    subcategory: infrastructure
+    description: Cloudflare, Docker, GCP deployment
+    keywords: [devops, cloudflare, docker, gcp, deploy]
+    invocation: "/devops"
+
+  - id: skill.backend-development
+    name: Backend Development
+    category: skill
+    subcategory: backend
+    description: APIs, auth, databases, microservices
+    keywords: [backend, api, auth, database, microservices]
+    invocation: "/backend-development"
+
+  - id: skill.tdd
+    name: Test-Driven Development
+    category: skill
+    subcategory: testing
+    description: Write tests first, watch fail, implement
+    keywords: [tdd, test, driven, development]
+    invocation: "/test-driven-development"
+
+  - id: skill.code-review
+    name: Code Review
+    category: skill
+    subcategory: quality
+    description: Receive and request code reviews
+    keywords: [review, code, feedback, quality]
+    invocation: "/code-review"
+
+  - id: skill.databases
+    name: Databases
+    category: skill
+    subcategory: database
+    description: MongoDB and PostgreSQL operations
+    keywords: [database, mongo, postgres, sql, query]
+    invocation: "/databases"
+
+  - id: skill.media-processing
+    name: Media Processing
+    category: skill
+    subcategory: media
+    description: FFmpeg and ImageMagick operations
+    keywords: [media, ffmpeg, imagemagick, video, image]
+    invocation: "/media-processing"
+
+  - id: skill.web-frameworks
+    name: Web Frameworks
+    category: skill
+    subcategory: frontend
+    description: Next.js, Turborepo, modern web stack
+    keywords: [nextjs, turborepo, react, web, framework]
+    invocation: "/web-frameworks"
+
+  - id: skill.ui-styling
+    name: UI Styling
+    category: skill
+    subcategory: frontend
+    description: Tailwind, shadcn/ui, design systems
+    keywords: [tailwind, shadcn, css, styling, design]
+    invocation: "/ui-styling"
+
+  - id: skill.llm-application
+    name: LLM Application Dev
+    category: skill
+    subcategory: ai
+    description: Prompt engineering, RAG, LLM integration
+    keywords: [llm, prompt, rag, ai, integration]
+    invocation: "/llm-application-dev"
+
+  - id: skill.sequential-thinking
+    name: Sequential Thinking
+    category: skill
+    subcategory: workflow
+    description: Step-by-step reasoning with revision
+    keywords: [thinking, reasoning, step, analysis]
+    invocation: "/sequential-thinking"
+
+  # ============================================================================
+  # Commands - Slash Commands
+  # ============================================================================
+  - id: cmd.review
+    name: /review
+    category: command
+    subcategory: quality
+    description: Request code review on current changes
+    keywords: [review, code, quality, check]
+    invocation: "/review"
+    icon: "📝"
+
+  - id: cmd.debug
+    name: /debug
+    category: command
+    subcategory: coding
+    description: Debug current issue with systematic approach
+    keywords: [debug, fix, error, bug]
+    invocation: "/debug"
+    icon: "🔧"
+
+  - id: cmd.research
+    name: /research
+    category: command
+    subcategory: research
+    description: Deep research on a topic
+    keywords: [research, search, investigate, learn]
+    invocation: "/research"
+    icon: "🔍"
+
+  - id: cmd.prime-context
+    name: /prime-context
+    category: command
+    subcategory: workflow
+    description: Load project context for new session
+    keywords: [context, prime, load, session]
+    invocation: "/prime-context"
+    icon: "📚"
+
+  - id: cmd.mcp-install
+    name: /mcp-install
+    category: command
+    subcategory: mcp
+    description: Install and configure MCP server
+    keywords: [mcp, install, setup, configure]
+    invocation: "/mcp-install"
+    icon: "📦"
+
+  - id: cmd.plugin-install
+    name: /plugin-install
+    category: command
+    subcategory: plugins
+    description: Install OpenCode plugin
+    keywords: [plugin, install, add, extension]
+    invocation: "/plugin-install"
+    icon: "🔌"
+
+  - id: cmd.openspec-proposal
+    name: /openspec-proposal
+    category: command
+    subcategory: planning
+    description: Create new OpenSpec change proposal
+    keywords: [spec, proposal, change, plan]
+    invocation: "/openspec-proposal"
+    icon: "📋"
+
+  - id: cmd.openspec-apply
+    name: /openspec-apply
+    category: command
+    subcategory: planning
+    description: Implement approved OpenSpec change
+    keywords: [spec, apply, implement, change]
+    invocation: "/openspec-apply"
+    icon: "✅"
+
+  - id: cmd.generate-mcp-commands
+    name: /generate-mcp-commands
+    category: command
+    subcategory: mcp
+    description: Generate MCP command definitions
+    keywords: [mcp, generate, commands, create]
+    invocation: "/generate-mcp-commands"
+    icon: "⚙️"
