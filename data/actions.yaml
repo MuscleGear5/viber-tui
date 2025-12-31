@@ -485,7 +485,6 @@ actions:
     description: Request code review on current changes
     keywords: [review, code, quality, check]
     invocation: "/review"
-    icon: "📝"
 
   - id: cmd.debug
     name: /debug
@@ -494,7 +493,6 @@ actions:
     description: Debug current issue with systematic approach
     keywords: [debug, fix, error, bug]
     invocation: "/debug"
-    icon: "🔧"
 
   - id: cmd.research
     name: /research
@@ -503,7 +501,6 @@ actions:
     description: Deep research on a topic
     keywords: [research, search, investigate, learn]
     invocation: "/research"
-    icon: "🔍"
 
   - id: cmd.prime-context
     name: /prime-context
@@ -512,7 +509,6 @@ actions:
     description: Load project context for new session
     keywords: [context, prime, load, session]
     invocation: "/prime-context"
-    icon: "📚"
 
   - id: cmd.mcp-install
     name: /mcp-install
@@ -521,7 +517,6 @@ actions:
     description: Install and configure MCP server
     keywords: [mcp, install, setup, configure]
     invocation: "/mcp-install"
-    icon: "📦"
 
   - id: cmd.plugin-install
     name: /plugin-install
@@ -530,7 +525,6 @@ actions:
     description: Install OpenCode plugin
     keywords: [plugin, install, add, extension]
     invocation: "/plugin-install"
-    icon: "🔌"
 
   - id: cmd.openspec-proposal
     name: /openspec-proposal
@@ -539,7 +533,6 @@ actions:
     description: Create new OpenSpec change proposal
     keywords: [spec, proposal, change, plan]
     invocation: "/openspec-proposal"
-    icon: "📋"
 
   - id: cmd.openspec-apply
     name: /openspec-apply
@@ -548,7 +541,6 @@ actions:
     description: Implement approved OpenSpec change
     keywords: [spec, apply, implement, change]
     invocation: "/openspec-apply"
-    icon: "✅"
 
   - id: cmd.generate-mcp-commands
     name: /generate-mcp-commands
@@ -557,4 +549,3 @@ actions:
     description: Generate MCP command definitions
     keywords: [mcp, generate, commands, create]
     invocation: "/generate-mcp-commands"
-    icon: "⚙️"
