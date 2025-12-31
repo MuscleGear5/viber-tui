@@ -13,7 +13,6 @@ actions:
       - name: code
         param_type: string
         required: true
-        description: TypeScript code to execute
 
   - id: mcp.ncp-research
     name: NCP Research
@@ -186,6 +185,48 @@ actions:
         param_type: string
         required: true
 
+  - id: mcp.lsp-diagnostics
+    name: LSP Diagnostics
+    category: mcp
+    subcategory: coding
+    description: Get errors and warnings from language server
+    keywords: [lsp, errors, warnings, diagnostics, lint]
+    invocation: lsp_diagnostics
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+
+  - id: mcp.lsp-definition
+    name: LSP Go to Definition
+    category: mcp
+    subcategory: coding
+    description: Jump to where a symbol is defined
+    keywords: [lsp, definition, goto, navigate, symbol]
+    invocation: lsp_goto_definition
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+      - name: line
+        param_type: number
+        required: true
+      - name: character
+        param_type: number
+        required: true
+
+  - id: mcp.lsp-symbols
+    name: LSP Document Symbols
+    category: mcp
+    subcategory: coding
+    description: Get hierarchical outline of all symbols in file
+    keywords: [lsp, symbols, outline, structure, navigate]
+    invocation: lsp_document_symbols
+    params:
+      - name: filePath
+        param_type: path
+        required: true
+
   - id: mcp.background-task
     name: Background Task
     category: mcp
@@ -213,9 +254,61 @@ actions:
         param_type: string
         required: true
 
+  - id: mcp.session-list
+    name: Session List
+    category: mcp
+    subcategory: productivity
+    description: List all OpenCode sessions with metadata
+    keywords: [session, list, history, browse]
+    invocation: session_list
+
+  - id: mcp.gemini-generate
+    name: Gemini Generate Image
+    category: mcp
+    subcategory: creative
+    description: Generate image from text prompt via Gemini
+    keywords: [image, generate, ai, gemini, create]
+    invocation: index_generate
+    params:
+      - name: prompt
+        param_type: string
+        required: true
+
+  - id: mcp.gemini-edit
+    name: Gemini Edit Image
+    category: mcp
+    subcategory: creative
+    description: Edit existing image with Gemini AI
+    keywords: [image, edit, ai, gemini, modify]
+    invocation: index_edit
+    params:
+      - name: image
+        param_type: path
+        required: true
+      - name: prompt
+        param_type: string
+        required: true
+
+  - id: mcp.gemini-analyze
+    name: Gemini Analyze Image
+    category: mcp
+    subcategory: creative
+    description: Analyze image with Gemini AI
+    keywords: [image, analyze, ai, gemini, describe]
+    invocation: index_analyze
+    params:
+      - name: image
+        param_type: path
+        required: true
+      - name: question
+        param_type: string
+        required: true
+
   # ============================================================================
-  # Agents - Specialized AI Workers
+  # Agents - Specialized AI Workers (130+ agents)
   # ============================================================================
+
+  # --- Research & Exploration ---
   - id: agent.explore
     name: Explore Agent
     category: agent
@@ -232,6 +325,55 @@ actions:
     keywords: [docs, research, library, external, best-practices]
     invocation: "call_omo_agent librarian"
 
+  - id: agent.research-analyst
+    name: Research Analyst
+    category: agent
+    subcategory: research
+    description: Comprehensive information gathering and synthesis
+    keywords: [research, analysis, information, synthesis]
+    invocation: "task research-analyst"
+
+  - id: agent.data-researcher
+    name: Data Researcher
+    category: agent
+    subcategory: research
+    description: Discover and analyze diverse data sources
+    keywords: [data, research, mining, analysis]
+    invocation: "task data-researcher"
+
+  - id: agent.search-specialist
+    name: Search Specialist
+    category: agent
+    subcategory: research
+    description: Advanced information retrieval and discovery
+    keywords: [search, retrieval, find, discovery]
+    invocation: "task search-specialist"
+
+  - id: agent.trend-analyst
+    name: Trend Analyst
+    category: agent
+    subcategory: research
+    description: Identify emerging patterns and forecast trends
+    keywords: [trends, forecast, patterns, analysis]
+    invocation: "task trend-analyst"
+
+  - id: agent.competitive-analyst
+    name: Competitive Analyst
+    category: agent
+    subcategory: research
+    description: Competitor intelligence and market positioning
+    keywords: [competitive, market, analysis, strategy]
+    invocation: "task competitive-analyst"
+
+  - id: agent.market-researcher
+    name: Market Researcher
+    category: agent
+    subcategory: research
+    description: Market analysis and consumer insights
+    keywords: [market, consumer, insights, segmentation]
+    invocation: "task market-researcher"
+
+  # --- General & Multi-purpose ---
   - id: agent.general
     name: General Agent
     category: agent
@@ -240,6 +382,15 @@ actions:
     keywords: [general, multi-step, complex, autonomous]
     invocation: "task general"
 
+  - id: agent.knowledge-synthesizer
+    name: Knowledge Synthesizer
+    category: agent
+    subcategory: general
+    description: Extract insights from multi-agent interactions
+    keywords: [knowledge, synthesis, insights, learning]
+    invocation: "task knowledge-synthesizer"
+
+  # --- Code Quality & Review ---
   - id: agent.code-reviewer
     name: Code Reviewer
     category: agent
@@ -248,6 +399,47 @@ actions:
     keywords: [review, code, quality, security, bugs]
     invocation: "task code-reviewer"
 
+  - id: agent.architect-reviewer
+    name: Architect Reviewer
+    category: agent
+    subcategory: quality
+    description: System design validation and pattern assessment
+    keywords: [architecture, review, patterns, design]
+    invocation: "task architect-reviewer"
+
+  - id: agent.security-auditor
+    name: Security Auditor
+    category: agent
+    subcategory: quality
+    description: Security assessments and compliance validation
+    keywords: [security, audit, compliance, vulnerability]
+    invocation: "task security-auditor"
+
+  - id: agent.compliance-auditor
+    name: Compliance Auditor
+    category: agent
+    subcategory: quality
+    description: Regulatory frameworks and data privacy compliance
+    keywords: [compliance, gdpr, hipaa, pci, audit]
+    invocation: "task compliance-auditor"
+
+  - id: agent.qa-expert
+    name: QA Expert
+    category: agent
+    subcategory: quality
+    description: Comprehensive quality assurance and test strategy
+    keywords: [qa, testing, quality, strategy]
+    invocation: "task qa-expert"
+
+  - id: agent.accessibility-tester
+    name: Accessibility Tester
+    category: agent
+    subcategory: quality
+    description: WCAG compliance and inclusive design testing
+    keywords: [accessibility, wcag, a11y, inclusive]
+    invocation: "task accessibility-tester"
+
+  # --- Frontend & UI ---
   - id: agent.ui-engineer
     name: UI Engineer
     category: agent
@@ -256,14 +448,71 @@ actions:
     keywords: [ui, frontend, react, components, design]
     invocation: "task ui-engineer"
 
-  - id: agent.debugger
-    name: Debugger Agent
+  - id: agent.frontend-developer
+    name: Frontend Developer
     category: agent
-    subcategory: coding
-    description: Complex issue diagnosis and root cause analysis
-    keywords: [debug, diagnose, error, bug, fix]
-    invocation: "task debugger"
+    subcategory: frontend
+    description: Robust, scalable frontend solutions
+    keywords: [frontend, react, typescript, web]
+    invocation: "task frontend-developer"
 
+  - id: agent.react-specialist
+    name: React Specialist
+    category: agent
+    subcategory: frontend
+    description: React 18+, hooks, server components
+    keywords: [react, hooks, components, frontend]
+    invocation: "task react-specialist"
+
+  - id: agent.vue-expert
+    name: Vue Expert
+    category: agent
+    subcategory: frontend
+    description: Vue 3, Composition API, Nuxt development
+    keywords: [vue, nuxt, composition, frontend]
+    invocation: "task vue-expert"
+
+  - id: agent.angular-architect
+    name: Angular Architect
+    category: agent
+    subcategory: frontend
+    description: Angular 15+, RxJS, NgRx, enterprise patterns
+    keywords: [angular, rxjs, ngrx, enterprise]
+    invocation: "task angular-architect"
+
+  - id: agent.nextjs-developer
+    name: Next.js Developer
+    category: agent
+    subcategory: frontend
+    description: Next.js 14+, App Router, server components
+    keywords: [nextjs, react, ssr, app-router]
+    invocation: "task nextjs-developer"
+
+  - id: agent.ui-designer
+    name: UI Designer
+    category: agent
+    subcategory: frontend
+    description: Intuitive, beautiful, accessible interfaces
+    keywords: [design, ui, visual, interface]
+    invocation: "task ui-designer"
+
+  - id: agent.ux-researcher
+    name: UX Researcher
+    category: agent
+    subcategory: frontend
+    description: User insights and usability testing
+    keywords: [ux, research, usability, user]
+    invocation: "task ux-researcher"
+
+  - id: agent.seo-specialist
+    name: SEO Specialist
+    category: agent
+    subcategory: frontend
+    description: Technical SEO and search optimization
+    keywords: [seo, search, optimization, ranking]
+    invocation: "task seo-specialist"
+
+  # --- Backend & APIs ---
   - id: agent.backend-developer
     name: Backend Developer
     category: agent
@@ -272,46 +521,39 @@ actions:
     keywords: [backend, api, server, database]
     invocation: "task backend-developer"
 
-  - id: agent.typescript-pro
-    name: TypeScript Pro
+  - id: agent.api-designer
+    name: API Designer
     category: agent
-    subcategory: coding
-    description: Advanced TypeScript, type system, build optimization
-    keywords: [typescript, types, ts, advanced]
-    invocation: "task typescript-pro"
+    subcategory: backend
+    description: Scalable, developer-friendly API interfaces
+    keywords: [api, rest, graphql, design]
+    invocation: "task api-designer"
 
-  - id: agent.python-pro
-    name: Python Pro
+  - id: agent.graphql-architect
+    name: GraphQL Architect
     category: agent
-    subcategory: coding
-    description: Modern Python development, async, data science
-    keywords: [python, async, data, science]
-    invocation: "task python-pro"
+    subcategory: backend
+    description: GraphQL schema design and federation
+    keywords: [graphql, schema, federation, api]
+    invocation: "task graphql-architect"
 
-  - id: agent.rust-engineer
-    name: Rust Engineer
+  - id: agent.microservices-architect
+    name: Microservices Architect
     category: agent
-    subcategory: coding
-    description: Systems programming, memory safety, performance
-    keywords: [rust, systems, performance, memory]
-    invocation: "task rust-engineer"
+    subcategory: backend
+    description: Distributed systems and service boundaries
+    keywords: [microservices, distributed, architecture]
+    invocation: "task microservices-architect"
 
-  - id: agent.devops-engineer
-    name: DevOps Engineer
+  - id: agent.websocket-engineer
+    name: WebSocket Engineer
     category: agent
-    subcategory: infrastructure
-    description: CI/CD, Docker, Kubernetes, cloud platforms
-    keywords: [devops, ci, cd, docker, kubernetes, cloud]
-    invocation: "task devops-engineer"
+    subcategory: backend
+    description: Real-time bidirectional communication
+    keywords: [websocket, realtime, messaging, events]
+    invocation: "task websocket-engineer"
 
-  - id: agent.security-engineer
-    name: Security Engineer
-    category: agent
-    subcategory: security
-    description: Security audits, vulnerability assessment
-    keywords: [security, audit, vulnerability, penetration]
-    invocation: "task security-engineer"
-
+  # --- Database ---
   - id: agent.database-administrator
     name: Database Administrator
     category: agent
@@ -320,14 +562,275 @@ actions:
     keywords: [database, sql, postgres, mysql, optimization]
     invocation: "task database-administrator"
 
-  - id: agent.mcp-developer
-    name: MCP Developer
+  - id: agent.database-optimizer
+    name: Database Optimizer
     category: agent
-    subcategory: mcp
-    description: Build MCP servers and integrations
-    keywords: [mcp, server, protocol, integration]
-    invocation: "task mcp-developer"
+    subcategory: database
+    description: Query optimization and performance tuning
+    keywords: [database, optimization, query, performance]
+    invocation: "task database-optimizer"
 
+  - id: agent.postgres-pro
+    name: PostgreSQL Pro
+    category: agent
+    subcategory: database
+    description: PostgreSQL administration and optimization
+    keywords: [postgres, postgresql, database, sql]
+    invocation: "task postgres-pro"
+
+  - id: agent.sql-pro
+    name: SQL Pro
+    category: agent
+    subcategory: database
+    description: Complex queries and database design
+    keywords: [sql, query, database, optimization]
+    invocation: "task sql-pro"
+
+  # --- Programming Languages ---
+  - id: agent.typescript-pro
+    name: TypeScript Pro
+    category: agent
+    subcategory: languages
+    description: Advanced TypeScript, type system, build optimization
+    keywords: [typescript, types, ts, advanced]
+    invocation: "task typescript-pro"
+
+  - id: agent.javascript-pro
+    name: JavaScript Pro
+    category: agent
+    subcategory: languages
+    description: Modern ES2023+, async, full-stack JS
+    keywords: [javascript, es6, async, nodejs]
+    invocation: "task javascript-pro"
+
+  - id: agent.python-pro
+    name: Python Pro
+    category: agent
+    subcategory: languages
+    description: Modern Python development, async, data science
+    keywords: [python, async, data, science]
+    invocation: "task python-pro"
+
+  - id: agent.rust-engineer
+    name: Rust Engineer
+    category: agent
+    subcategory: languages
+    description: Systems programming, memory safety, performance
+    keywords: [rust, systems, performance, memory]
+    invocation: "task rust-engineer"
+
+  - id: agent.golang-pro
+    name: Go Pro
+    category: agent
+    subcategory: languages
+    description: High-performance systems and microservices
+    keywords: [go, golang, concurrent, microservices]
+    invocation: "task golang-pro"
+
+  - id: agent.cpp-pro
+    name: C++ Pro
+    category: agent
+    subcategory: languages
+    description: Modern C++20/23, systems programming
+    keywords: [cpp, c++, systems, performance]
+    invocation: "task cpp-pro"
+
+  - id: agent.java-architect
+    name: Java Architect
+    category: agent
+    subcategory: languages
+    description: Enterprise Java, Spring ecosystem
+    keywords: [java, spring, enterprise, jvm]
+    invocation: "task java-architect"
+
+  - id: agent.kotlin-specialist
+    name: Kotlin Specialist
+    category: agent
+    subcategory: languages
+    description: Coroutines, multiplatform, Android
+    keywords: [kotlin, android, coroutines, multiplatform]
+    invocation: "task kotlin-specialist"
+
+  - id: agent.swift-expert
+    name: Swift Expert
+    category: agent
+    subcategory: languages
+    description: Swift 5.9+, SwiftUI, Apple platforms
+    keywords: [swift, swiftui, ios, macos]
+    invocation: "task swift-expert"
+
+  - id: agent.csharp-developer
+    name: C# Developer
+    category: agent
+    subcategory: languages
+    description: Modern .NET, ASP.NET Core, Blazor
+    keywords: [csharp, dotnet, aspnet, blazor]
+    invocation: "task csharp-developer"
+
+  - id: agent.php-pro
+    name: PHP Pro
+    category: agent
+    subcategory: languages
+    description: Modern PHP 8.3+, Laravel, Symfony
+    keywords: [php, laravel, symfony, web]
+    invocation: "task php-pro"
+
+  # --- Frameworks ---
+  - id: agent.django-developer
+    name: Django Developer
+    category: agent
+    subcategory: frameworks
+    description: Django 4+, REST APIs, async views
+    keywords: [django, python, rest, web]
+    invocation: "task django-developer"
+
+  - id: agent.laravel-specialist
+    name: Laravel Specialist
+    category: agent
+    subcategory: frameworks
+    description: Laravel 10+, Eloquent, queue systems
+    keywords: [laravel, php, eloquent, web]
+    invocation: "task laravel-specialist"
+
+  - id: agent.rails-expert
+    name: Rails Expert
+    category: agent
+    subcategory: frameworks
+    description: Rails 8+, Hotwire, Action Cable
+    keywords: [rails, ruby, hotwire, web]
+    invocation: "task rails-expert"
+
+  - id: agent.spring-boot-engineer
+    name: Spring Boot Engineer
+    category: agent
+    subcategory: frameworks
+    description: Spring Boot 3+, microservices, reactive
+    keywords: [spring, boot, java, microservices]
+    invocation: "task spring-boot-engineer"
+
+  - id: agent.flutter-expert
+    name: Flutter Expert
+    category: agent
+    subcategory: frameworks
+    description: Flutter 3+, cross-platform, native performance
+    keywords: [flutter, dart, mobile, cross-platform]
+    invocation: "task flutter-expert"
+
+  - id: agent.electron-pro
+    name: Electron Pro
+    category: agent
+    subcategory: frameworks
+    description: Desktop apps with Electron
+    keywords: [electron, desktop, cross-platform, nodejs]
+    invocation: "task electron-pro"
+
+  # --- DevOps & Infrastructure ---
+  - id: agent.devops-engineer
+    name: DevOps Engineer
+    category: agent
+    subcategory: infrastructure
+    description: CI/CD, Docker, Kubernetes, cloud platforms
+    keywords: [devops, ci, cd, docker, kubernetes, cloud]
+    invocation: "task devops-engineer"
+
+  - id: agent.cloud-architect
+    name: Cloud Architect
+    category: agent
+    subcategory: infrastructure
+    description: Multi-cloud strategies, AWS, Azure, GCP
+    keywords: [cloud, aws, azure, gcp, architecture]
+    invocation: "task cloud-architect"
+
+  - id: agent.kubernetes-specialist
+    name: Kubernetes Specialist
+    category: agent
+    subcategory: infrastructure
+    description: Container orchestration and cluster management
+    keywords: [kubernetes, k8s, containers, orchestration]
+    invocation: "task kubernetes-specialist"
+
+  - id: agent.terraform-engineer
+    name: Terraform Engineer
+    category: agent
+    subcategory: infrastructure
+    description: Infrastructure as code, multi-cloud provisioning
+    keywords: [terraform, iac, infrastructure, cloud]
+    invocation: "task terraform-engineer"
+
+  - id: agent.platform-engineer
+    name: Platform Engineer
+    category: agent
+    subcategory: infrastructure
+    description: Internal developer platforms, self-service infra
+    keywords: [platform, developer, infrastructure, gitops]
+    invocation: "task platform-engineer"
+
+  - id: agent.sre-engineer
+    name: SRE Engineer
+    category: agent
+    subcategory: infrastructure
+    description: Site reliability, SLOs, chaos engineering
+    keywords: [sre, reliability, slo, chaos]
+    invocation: "task sre-engineer"
+
+  - id: agent.network-engineer
+    name: Network Engineer
+    category: agent
+    subcategory: infrastructure
+    description: Cloud and hybrid network architectures
+    keywords: [network, cloud, hybrid, security]
+    invocation: "task network-engineer"
+
+  - id: agent.deployment-engineer
+    name: Deployment Engineer
+    category: agent
+    subcategory: infrastructure
+    description: CI/CD pipelines, release automation
+    keywords: [deployment, cicd, release, automation]
+    invocation: "task deployment-engineer"
+
+  - id: agent.build-engineer
+    name: Build Engineer
+    category: agent
+    subcategory: infrastructure
+    description: Build systems, compilation, developer productivity
+    keywords: [build, compilation, tooling, productivity]
+    invocation: "task build-engineer"
+
+  # --- Security ---
+  - id: agent.security-engineer
+    name: Security Engineer
+    category: agent
+    subcategory: security
+    description: Security audits, vulnerability assessment
+    keywords: [security, audit, vulnerability, penetration]
+    invocation: "task security-engineer"
+
+  - id: agent.penetration-tester
+    name: Penetration Tester
+    category: agent
+    subcategory: security
+    description: Ethical hacking and security testing
+    keywords: [pentest, hacking, security, exploit]
+    invocation: "task penetration-tester"
+
+  - id: agent.incident-responder
+    name: Incident Responder
+    category: agent
+    subcategory: security
+    description: Security incident management and forensics
+    keywords: [incident, response, forensics, security]
+    invocation: "task incident-responder"
+
+  - id: agent.devops-incident-responder
+    name: DevOps Incident Responder
+    category: agent
+    subcategory: security
+    description: Production issue detection and resolution
+    keywords: [incident, devops, production, outage]
+    invocation: "task devops-incident-responder"
+
+  # --- Testing ---
   - id: agent.test-automator
     name: Test Automator
     category: agent
@@ -335,6 +838,39 @@ actions:
     description: Test frameworks, CI integration, coverage
     keywords: [test, automation, ci, coverage, framework]
     invocation: "task test-automator"
+
+  - id: agent.chaos-engineer
+    name: Chaos Engineer
+    category: agent
+    subcategory: testing
+    description: Controlled failure injection, resilience testing
+    keywords: [chaos, resilience, testing, failure]
+    invocation: "task chaos-engineer"
+
+  - id: agent.performance-engineer
+    name: Performance Engineer
+    category: agent
+    subcategory: testing
+    description: System optimization and bottleneck identification
+    keywords: [performance, optimization, bottleneck, scaling]
+    invocation: "task performance-engineer"
+
+  - id: agent.performance-monitor
+    name: Performance Monitor
+    category: agent
+    subcategory: testing
+    description: Metrics collection and anomaly detection
+    keywords: [monitoring, metrics, anomaly, observability]
+    invocation: "task performance-monitor"
+
+  # --- Debugging & Refactoring ---
+  - id: agent.debugger
+    name: Debugger Agent
+    category: agent
+    subcategory: coding
+    description: Complex issue diagnosis and root cause analysis
+    keywords: [debug, diagnose, error, bug, fix]
+    invocation: "task debugger"
 
   - id: agent.refactoring-specialist
     name: Refactoring Specialist
@@ -344,9 +880,406 @@ actions:
     keywords: [refactor, patterns, clean, transform]
     invocation: "task refactoring-specialist"
 
+  - id: agent.legacy-modernizer
+    name: Legacy Modernizer
+    category: agent
+    subcategory: coding
+    description: Incremental migration and modernization
+    keywords: [legacy, modernize, migration, refactor]
+    invocation: "task legacy-modernizer"
+
+  - id: agent.error-detective
+    name: Error Detective
+    category: agent
+    subcategory: coding
+    description: Error pattern analysis and root cause discovery
+    keywords: [error, debug, analysis, correlation]
+    invocation: "task error-detective"
+
+  - id: agent.error-coordinator
+    name: Error Coordinator
+    category: agent
+    subcategory: coding
+    description: Distributed error handling and recovery
+    keywords: [error, distributed, recovery, resilience]
+    invocation: "task error-coordinator"
+
+  # --- AI & ML ---
+  - id: agent.ai-engineer
+    name: AI Engineer
+    category: agent
+    subcategory: ai
+    description: AI system design and production deployment
+    keywords: [ai, machine-learning, deployment, models]
+    invocation: "task ai-engineer"
+
+  - id: agent.ml-engineer
+    name: ML Engineer
+    category: agent
+    subcategory: ai
+    description: ML model lifecycle and production systems
+    keywords: [ml, machine-learning, models, training]
+    invocation: "task ml-engineer"
+
+  - id: agent.mlops-engineer
+    name: MLOps Engineer
+    category: agent
+    subcategory: ai
+    description: ML infrastructure and operational excellence
+    keywords: [mlops, ml, infrastructure, deployment]
+    invocation: "task mlops-engineer"
+
+  - id: agent.llm-architect
+    name: LLM Architect
+    category: agent
+    subcategory: ai
+    description: Large language model architecture and deployment
+    keywords: [llm, gpt, language-model, architecture]
+    invocation: "task llm-architect"
+
+  - id: agent.nlp-engineer
+    name: NLP Engineer
+    category: agent
+    subcategory: ai
+    description: Natural language processing and generation
+    keywords: [nlp, text, language, processing]
+    invocation: "task nlp-engineer"
+
+  - id: agent.data-scientist
+    name: Data Scientist
+    category: agent
+    subcategory: ai
+    description: Statistical analysis and predictive modeling
+    keywords: [data, science, statistics, modeling]
+    invocation: "task data-scientist"
+
+  - id: agent.prompt-engineer
+    name: Prompt Engineer
+    category: agent
+    subcategory: ai
+    description: Prompt design and optimization for LLMs
+    keywords: [prompt, llm, optimization, design]
+    invocation: "task prompt-engineer"
+
+  # --- Data ---
+  - id: agent.data-engineer
+    name: Data Engineer
+    category: agent
+    subcategory: data
+    description: Data pipelines, ETL/ELT, infrastructure
+    keywords: [data, pipeline, etl, infrastructure]
+    invocation: "task data-engineer"
+
+  - id: agent.data-analyst
+    name: Data Analyst
+    category: agent
+    subcategory: data
+    description: Business intelligence and visualization
+    keywords: [data, analysis, bi, visualization]
+    invocation: "task data-analyst"
+
+  - id: agent.quant-analyst
+    name: Quantitative Analyst
+    category: agent
+    subcategory: data
+    description: Financial modeling and algorithmic trading
+    keywords: [quant, finance, trading, algorithms]
+    invocation: "task quant-analyst"
+
+  # --- Mobile ---
+  - id: agent.mobile-developer
+    name: Mobile Developer
+    category: agent
+    subcategory: mobile
+    description: Cross-platform mobile with React Native and Flutter
+    keywords: [mobile, react-native, flutter, cross-platform]
+    invocation: "task mobile-developer"
+
+  - id: agent.mobile-app-developer
+    name: Mobile App Developer
+    category: agent
+    subcategory: mobile
+    description: Native and cross-platform iOS/Android
+    keywords: [mobile, ios, android, native]
+    invocation: "task mobile-app-developer"
+
+  # --- Documentation & Writing ---
+  - id: agent.technical-writer
+    name: Technical Writer
+    category: agent
+    subcategory: documentation
+    description: API docs, user guides, technical content
+    keywords: [docs, writing, technical, documentation]
+    invocation: "task technical-writer"
+
+  - id: agent.documentation-engineer
+    name: Documentation Engineer
+    category: agent
+    subcategory: documentation
+    description: Documentation systems and automation
+    keywords: [docs, automation, systems, engineering]
+    invocation: "task documentation-engineer"
+
+  - id: agent.api-documenter
+    name: API Documenter
+    category: agent
+    subcategory: documentation
+    description: OpenAPI/Swagger and API documentation
+    keywords: [api, openapi, swagger, documentation]
+    invocation: "task api-documenter"
+
+  - id: agent.content-marketer
+    name: Content Marketer
+    category: agent
+    subcategory: documentation
+    description: Content strategy and SEO optimization
+    keywords: [content, marketing, seo, strategy]
+    invocation: "task content-marketer"
+
+  # --- MCP & Tools ---
+  - id: agent.mcp-developer
+    name: MCP Developer
+    category: agent
+    subcategory: mcp
+    description: Build MCP servers and integrations
+    keywords: [mcp, server, protocol, integration]
+    invocation: "task mcp-developer"
+
+  - id: agent.cli-developer
+    name: CLI Developer
+    category: agent
+    subcategory: tools
+    description: Command-line interfaces and terminal apps
+    keywords: [cli, terminal, command-line, tools]
+    invocation: "task cli-developer"
+
+  - id: agent.tooling-engineer
+    name: Tooling Engineer
+    category: agent
+    subcategory: tools
+    description: Developer tool creation and productivity
+    keywords: [tools, tooling, productivity, developer]
+    invocation: "task tooling-engineer"
+
+  - id: agent.dx-optimizer
+    name: DX Optimizer
+    category: agent
+    subcategory: tools
+    description: Developer experience and workflow automation
+    keywords: [dx, developer, experience, workflow]
+    invocation: "task dx-optimizer"
+
+  - id: agent.dependency-manager
+    name: Dependency Manager
+    category: agent
+    subcategory: tools
+    description: Package management and security auditing
+    keywords: [dependencies, packages, security, audit]
+    invocation: "task dependency-manager"
+
+  - id: agent.git-workflow-manager
+    name: Git Workflow Manager
+    category: agent
+    subcategory: tools
+    description: Branching strategies and team collaboration
+    keywords: [git, workflow, branching, collaboration]
+    invocation: "task git-workflow-manager"
+
+  # --- Fullstack ---
+  - id: agent.fullstack-developer
+    name: Fullstack Developer
+    category: agent
+    subcategory: fullstack
+    description: End-to-end feature development
+    keywords: [fullstack, frontend, backend, full-stack]
+    invocation: "task fullstack-developer"
+
+  # --- Specialized Domains ---
+  - id: agent.blockchain-developer
+    name: Blockchain Developer
+    category: agent
+    subcategory: specialized
+    description: Smart contracts, DApps, DeFi protocols
+    keywords: [blockchain, solidity, web3, defi]
+    invocation: "task blockchain-developer"
+
+  - id: agent.game-developer
+    name: Game Developer
+    category: agent
+    subcategory: specialized
+    description: Game engine programming and optimization
+    keywords: [game, engine, graphics, multiplayer]
+    invocation: "task game-developer"
+
+  - id: agent.iot-engineer
+    name: IoT Engineer
+    category: agent
+    subcategory: specialized
+    description: Connected devices and edge computing
+    keywords: [iot, edge, devices, embedded]
+    invocation: "task iot-engineer"
+
+  - id: agent.embedded-systems
+    name: Embedded Systems
+    category: agent
+    subcategory: specialized
+    description: Microcontroller programming and RTOS
+    keywords: [embedded, microcontroller, rtos, hardware]
+    invocation: "task embedded-systems"
+
+  - id: agent.fintech-engineer
+    name: Fintech Engineer
+    category: agent
+    subcategory: specialized
+    description: Financial systems and compliance
+    keywords: [fintech, finance, payments, compliance]
+    invocation: "task fintech-engineer"
+
+  - id: agent.payment-integration
+    name: Payment Integration
+    category: agent
+    subcategory: specialized
+    description: Payment gateways and PCI compliance
+    keywords: [payments, stripe, pci, gateway]
+    invocation: "task payment-integration"
+
+  - id: agent.wordpress-master
+    name: WordPress Master
+    category: agent
+    subcategory: specialized
+    description: WordPress themes, plugins, enterprise
+    keywords: [wordpress, php, themes, plugins]
+    invocation: "task wordpress-master"
+
+  # --- .NET Ecosystem ---
+  - id: agent.dotnet-core-expert
+    name: .NET Core Expert
+    category: agent
+    subcategory: dotnet
+    description: .NET 10, minimal APIs, cloud-native
+    keywords: [dotnet, core, csharp, cloud-native]
+    invocation: "task dotnet-core-expert"
+
+  - id: agent.dotnet-framework-expert
+    name: .NET Framework Expert
+    category: agent
+    subcategory: dotnet
+    description: .NET Framework 4.8, legacy enterprise
+    keywords: [dotnet, framework, legacy, enterprise]
+    invocation: "task dotnet-framework-4.8-expert"
+
+  # --- Management & Process ---
+  - id: agent.product-manager
+    name: Product Manager
+    category: agent
+    subcategory: management
+    description: Product strategy and roadmap planning
+    keywords: [product, strategy, roadmap, planning]
+    invocation: "task product-manager"
+
+  - id: agent.project-manager
+    name: Project Manager
+    category: agent
+    subcategory: management
+    description: Project planning and delivery
+    keywords: [project, planning, delivery, management]
+    invocation: "task project-manager"
+
+  - id: agent.scrum-master
+    name: Scrum Master
+    category: agent
+    subcategory: management
+    description: Agile transformation and facilitation
+    keywords: [scrum, agile, sprint, facilitation]
+    invocation: "task scrum-master"
+
+  - id: agent.business-analyst
+    name: Business Analyst
+    category: agent
+    subcategory: management
+    description: Requirements gathering and process improvement
+    keywords: [business, requirements, analysis, process]
+    invocation: "task business-analyst"
+
+  - id: agent.risk-manager
+    name: Risk Manager
+    category: agent
+    subcategory: management
+    description: Risk assessment and mitigation strategies
+    keywords: [risk, assessment, mitigation, compliance]
+    invocation: "task risk-manager"
+
+  - id: agent.legal-advisor
+    name: Legal Advisor
+    category: agent
+    subcategory: management
+    description: Technology law and compliance
+    keywords: [legal, compliance, ip, privacy]
+    invocation: "task legal-advisor"
+
+  # --- Multi-Agent Orchestration ---
+  - id: agent.agent-organizer
+    name: Agent Organizer
+    category: agent
+    subcategory: orchestration
+    description: Multi-agent orchestration and team assembly
+    keywords: [agents, orchestration, team, workflow]
+    invocation: "task agent-organizer"
+
+  - id: agent.multi-agent-coordinator
+    name: Multi-Agent Coordinator
+    category: agent
+    subcategory: orchestration
+    description: Complex workflow orchestration
+    keywords: [multi-agent, coordination, workflow, parallel]
+    invocation: "task multi-agent-coordinator"
+
+  - id: agent.task-distributor
+    name: Task Distributor
+    category: agent
+    subcategory: orchestration
+    description: Intelligent work allocation and load balancing
+    keywords: [tasks, distribution, allocation, queue]
+    invocation: "task task-distributor"
+
+  - id: agent.workflow-orchestrator
+    name: Workflow Orchestrator
+    category: agent
+    subcategory: orchestration
+    description: Complex process design and state machines
+    keywords: [workflow, orchestration, state, process]
+    invocation: "task workflow-orchestrator"
+
+  - id: agent.context-manager
+    name: Context Manager
+    category: agent
+    subcategory: orchestration
+    description: Information storage and retrieval across agents
+    keywords: [context, state, storage, retrieval]
+    invocation: "task context-manager"
+
+  # --- Sales & Customer ---
+  - id: agent.sales-engineer
+    name: Sales Engineer
+    category: agent
+    subcategory: business
+    description: Technical pre-sales and solution architecture
+    keywords: [sales, presales, demo, solution]
+    invocation: "task sales-engineer"
+
+  - id: agent.customer-success-manager
+    name: Customer Success Manager
+    category: agent
+    subcategory: business
+    description: Customer retention and growth
+    keywords: [customer, success, retention, growth]
+    invocation: "task customer-success-manager"
+
   # ============================================================================
   # Skills - Specialized Knowledge & Workflows
   # ============================================================================
+
+  # --- Planning & Strategy ---
   - id: skill.planning
     name: Planning Skill
     category: skill
@@ -355,66 +1288,43 @@ actions:
     keywords: [plan, architecture, design, roadmap]
     invocation: "/planning"
 
-  - id: skill.frontend-design
-    name: Frontend Design
+  - id: skill.writing-plans
+    name: Writing Plans
     category: skill
-    subcategory: frontend
-    description: High-quality UI components, modern patterns
-    keywords: [frontend, ui, design, components, react]
-    invocation: "/frontend-design"
+    subcategory: workflow
+    description: Create detailed implementation plans for engineers
+    keywords: [plan, writing, implementation, tasks]
+    invocation: "/writing-plans"
 
-  - id: skill.mcp-builder
-    name: MCP Builder
+  - id: skill.executing-plans
+    name: Executing Plans
     category: skill
-    subcategory: mcp
-    description: Guide for creating MCP servers
-    keywords: [mcp, server, build, create, protocol]
-    invocation: "/mcp-builder"
+    subcategory: workflow
+    description: Execute plans with review checkpoints
+    keywords: [execute, plan, checkpoints, implementation]
+    invocation: "skill:executing-plans"
 
-  - id: skill.playwright
-    name: Playwright Testing
+  - id: skill.sequential-thinking
+    name: Sequential Thinking
     category: skill
-    subcategory: testing
-    description: Browser automation and E2E testing
-    keywords: [playwright, browser, e2e, test, automation]
-    invocation: "/playwright"
+    subcategory: workflow
+    description: Step-by-step reasoning with revision
+    keywords: [thinking, reasoning, step, analysis]
+    invocation: "/sequential-thinking"
 
-  - id: skill.ai-multimodal
-    name: AI Multimodal
+  - id: skill.brainstorming
+    name: Brainstorming
     category: skill
-    subcategory: ai
-    description: Process images, audio, video with Gemini
-    keywords: [ai, image, audio, video, gemini, multimodal]
-    invocation: "/ai-multimodal"
+    subcategory: workflow
+    description: Explore requirements and design before implementation
+    keywords: [brainstorm, creative, explore, design]
+    invocation: "skill:brainstorming"
 
-  - id: skill.chrome-devtools
-    name: Chrome DevTools
-    category: skill
-    subcategory: debugging
-    description: Browser debugging, performance analysis
-    keywords: [chrome, devtools, debug, performance, browser]
-    invocation: "/chrome-devtools"
-
-  - id: skill.devops
-    name: DevOps Skill
-    category: skill
-    subcategory: infrastructure
-    description: Cloudflare, Docker, GCP deployment
-    keywords: [devops, cloudflare, docker, gcp, deploy]
-    invocation: "/devops"
-
-  - id: skill.backend-development
-    name: Backend Development
-    category: skill
-    subcategory: backend
-    description: APIs, auth, databases, microservices
-    keywords: [backend, api, auth, database, microservices]
-    invocation: "/backend-development"
-
+  # --- Development Practices ---
   - id: skill.tdd
     name: Test-Driven Development
     category: skill
-    subcategory: testing
+    subcategory: development
     description: Write tests first, watch fail, implement
     keywords: [tdd, test, driven, development]
     invocation: "/test-driven-development"
@@ -422,26 +1332,59 @@ actions:
   - id: skill.code-review
     name: Code Review
     category: skill
-    subcategory: quality
+    subcategory: development
     description: Receive and request code reviews
     keywords: [review, code, feedback, quality]
     invocation: "/code-review"
 
-  - id: skill.databases
-    name: Databases
+  - id: skill.receiving-review
+    name: Receiving Code Review
     category: skill
-    subcategory: database
-    description: MongoDB and PostgreSQL operations
-    keywords: [database, mongo, postgres, sql, query]
-    invocation: "/databases"
+    subcategory: development
+    description: Handle review feedback with technical rigor
+    keywords: [review, feedback, receive, respond]
+    invocation: "skill:receiving-code-review"
 
-  - id: skill.media-processing
-    name: Media Processing
+  - id: skill.requesting-review
+    name: Requesting Code Review
     category: skill
-    subcategory: media
-    description: FFmpeg and ImageMagick operations
-    keywords: [media, ffmpeg, imagemagick, video, image]
-    invocation: "/media-processing"
+    subcategory: development
+    description: Request reviews before merging
+    keywords: [review, request, merge, verify]
+    invocation: "skill:requesting-code-review"
+
+  - id: skill.systematic-debugging
+    name: Systematic Debugging
+    category: skill
+    subcategory: development
+    description: Structured approach to bug diagnosis
+    keywords: [debug, systematic, diagnosis, bugs]
+    invocation: "skill:systematic-debugging"
+
+  - id: skill.subagent-development
+    name: Subagent-Driven Development
+    category: skill
+    subcategory: development
+    description: Execute plans with fresh subagents per task
+    keywords: [subagent, parallel, development, tasks]
+    invocation: "skill:subagent-driven-development"
+
+  - id: skill.verification
+    name: Verification Before Completion
+    category: skill
+    subcategory: development
+    description: Run verification commands before claiming done
+    keywords: [verify, verification, complete, check]
+    invocation: "skill:verification-before-completion"
+
+  # --- Frontend ---
+  - id: skill.frontend-design
+    name: Frontend Design
+    category: skill
+    subcategory: frontend
+    description: High-quality UI components, modern patterns
+    keywords: [frontend, ui, design, components, react]
+    invocation: "/frontend-design"
 
   - id: skill.web-frameworks
     name: Web Frameworks
@@ -459,6 +1402,50 @@ actions:
     keywords: [tailwind, shadcn, css, styling, design]
     invocation: "/ui-styling"
 
+  # --- Backend ---
+  - id: skill.backend-development
+    name: Backend Development
+    category: skill
+    subcategory: backend
+    description: APIs, auth, databases, microservices
+    keywords: [backend, api, auth, database, microservices]
+    invocation: "/backend-development"
+
+  - id: skill.databases
+    name: Databases
+    category: skill
+    subcategory: backend
+    description: MongoDB and PostgreSQL operations
+    keywords: [database, mongo, postgres, sql, query]
+    invocation: "/databases"
+
+  # --- DevOps ---
+  - id: skill.devops
+    name: DevOps Skill
+    category: skill
+    subcategory: infrastructure
+    description: Cloudflare, Docker, GCP deployment
+    keywords: [devops, cloudflare, docker, gcp, deploy]
+    invocation: "/devops"
+
+  # --- Testing ---
+  - id: skill.playwright
+    name: Playwright Testing
+    category: skill
+    subcategory: testing
+    description: Browser automation and E2E testing
+    keywords: [playwright, browser, e2e, test, automation]
+    invocation: "/playwright"
+
+  # --- AI & Multimodal ---
+  - id: skill.ai-multimodal
+    name: AI Multimodal
+    category: skill
+    subcategory: ai
+    description: Process images, audio, video with Gemini
+    keywords: [ai, image, audio, video, gemini, multimodal]
+    invocation: "/ai-multimodal"
+
   - id: skill.llm-application
     name: LLM Application Dev
     category: skill
@@ -467,13 +1454,73 @@ actions:
     keywords: [llm, prompt, rag, ai, integration]
     invocation: "/llm-application-dev"
 
-  - id: skill.sequential-thinking
-    name: Sequential Thinking
+  # --- Tools & Debugging ---
+  - id: skill.chrome-devtools
+    name: Chrome DevTools
+    category: skill
+    subcategory: debugging
+    description: Browser debugging, performance analysis
+    keywords: [chrome, devtools, debug, performance, browser]
+    invocation: "/chrome-devtools"
+
+  - id: skill.media-processing
+    name: Media Processing
+    category: skill
+    subcategory: media
+    description: FFmpeg and ImageMagick operations
+    keywords: [media, ffmpeg, imagemagick, video, image]
+    invocation: "/media-processing"
+
+  # --- MCP ---
+  - id: skill.mcp-builder
+    name: MCP Builder
+    category: skill
+    subcategory: mcp
+    description: Guide for creating MCP servers
+    keywords: [mcp, server, build, create, protocol]
+    invocation: "/mcp-builder"
+
+  # --- Git & Workflow ---
+  - id: skill.git-worktrees
+    name: Git Worktrees
+    category: skill
+    subcategory: git
+    description: Create isolated git worktrees for features
+    keywords: [git, worktree, isolation, feature]
+    invocation: "skill:using-git-worktrees"
+
+  - id: skill.finishing-branch
+    name: Finishing Development Branch
+    category: skill
+    subcategory: git
+    description: Complete work with merge/PR/cleanup options
+    keywords: [git, branch, merge, pr, finish]
+    invocation: "skill:finishing-a-development-branch"
+
+  - id: skill.parallel-agents
+    name: Dispatching Parallel Agents
     category: skill
     subcategory: workflow
-    description: Step-by-step reasoning with revision
-    keywords: [thinking, reasoning, step, analysis]
-    invocation: "/sequential-thinking"
+    description: Work on 2+ independent tasks simultaneously
+    keywords: [parallel, agents, concurrent, tasks]
+    invocation: "skill:dispatching-parallel-agents"
+
+  # --- Meta Skills ---
+  - id: skill.writing-skills
+    name: Writing Skills
+    category: skill
+    subcategory: meta
+    description: Create and edit custom skills
+    keywords: [skill, create, write, meta]
+    invocation: "skill:writing-skills"
+
+  - id: skill.using-superpowers
+    name: Using Superpowers
+    category: skill
+    subcategory: meta
+    description: How to find and use skills effectively
+    keywords: [skills, superpowers, meta, usage]
+    invocation: "skill:using-superpowers"
 
   # ============================================================================
   # Commands - Slash Commands
@@ -549,3 +1596,19 @@ actions:
     description: Generate MCP command definitions
     keywords: [mcp, generate, commands, create]
     invocation: "/generate-mcp-commands"
+
+  - id: cmd.prompt-engine
+    name: /prompt-engine
+    category: command
+    subcategory: ai
+    description: Advanced prompt engineering tools
+    keywords: [prompt, engine, llm, optimize]
+    invocation: "/prompt-engine"
+
+  - id: cmd.context7
+    name: /context7
+    category: command
+    subcategory: research
+    description: Query library documentation via Context7
+    keywords: [docs, context7, library, documentation]
+    invocation: "/context7"
