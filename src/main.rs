@@ -18,11 +18,16 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame, Terminal,
 };
-use std::{io, time::Duration};
+use std::{io, process::Command, time::Duration};
 
-use data::ActionRegistry;
+use data::{Action, ActionRegistry};
 use theme::{palette, styles, AnimationState, TICK_RATE_MS};
 use views::{Launcher, LauncherState};
+
+enum AppResult {
+    Quit,
+    Execute(Action),
+}
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -41,14 +46,20 @@ fn main() -> Result<()> {
     )?;
     terminal.show_cursor()?;
 
-    if let Err(err) = result {
-        eprintln!("Error: {err:?}");
+    match result {
+        Ok(AppResult::Quit) => {}
+        Ok(AppResult::Execute(action)) => {
+            execute_action(&action)?;
+        }
+        Err(err) => {
+            eprintln!("Error: {err:?}");
+        }
     }
 
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
+fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<AppResult> {
     let registry = ActionRegistry::load_from_file("data/actions.yaml")?;
     let mut animation = AnimationState::new();
     let mut launcher_state = LauncherState::new(&registry);
@@ -60,8 +71,8 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
             if let Event::Key(key) = event::read()? {
                 if key.kind == KeyEventKind::Press {
                     match (key.modifiers, key.code) {
-                        (_, KeyCode::Esc) => return Ok(()),
-                        (KeyModifiers::CONTROL, KeyCode::Char('c')) => return Ok(()),
+                        (_, KeyCode::Esc) => return Ok(AppResult::Quit),
+                        (KeyModifiers::CONTROL, KeyCode::Char('c')) => return Ok(AppResult::Quit),
 
                         (_, KeyCode::Up) | (KeyModifiers::CONTROL, KeyCode::Char('p')) => {
                             launcher_state.select_previous();
@@ -92,7 +103,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
 
                         (_, KeyCode::Enter) => {
                             if let Some(action) = launcher_state.selected_action() {
-                                eprintln!("Selected: {} ({})", action.name, action.invocation);
+                                return Ok(AppResult::Execute(action.clone()));
                             }
                         }
 
@@ -106,6 +117,45 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
         animation.tick();
         launcher_state.tick();
     }
+}
+
+fn execute_action(action: &Action) -> Result<()> {
+    println!(
+        "\x1b[36m>\x1b[0m Executing: \x1b[1;35m{}\x1b[0m",
+        action.name
+    );
+    println!("\x1b[90m  {}\x1b[0m", action.description);
+    println!();
+
+    match action.category {
+        data::ActionCategory::Mcp => {
+            println!("\x1b[33mMCP Tool:\x1b[0m {}", action.invocation);
+            println!("\x1b[90mCopy this to your AI assistant or run via MCP client\x1b[0m");
+        }
+        data::ActionCategory::Agent => {
+            println!("\x1b[32mAgent:\x1b[0m {}", action.invocation);
+            println!("\x1b[90mUse this agent type in your Task tool calls\x1b[0m");
+        }
+        data::ActionCategory::Skill => {
+            println!("\x1b[34mSkill:\x1b[0m {}", action.invocation);
+            println!("\x1b[90mInvoke this skill in your AI assistant\x1b[0m");
+        }
+        data::ActionCategory::Command => {
+            println!("\x1b[35mRunning command:\x1b[0m {}", action.invocation);
+            println!();
+
+            let status = Command::new("sh")
+                .arg("-c")
+                .arg(&action.invocation)
+                .status()?;
+
+            if !status.success() {
+                eprintln!("\x1b[31mCommand exited with status: {}\x1b[0m", status);
+            }
+        }
+    }
+
+    Ok(())
 }
 
 fn render(frame: &mut Frame, animation: &AnimationState, launcher_state: &mut LauncherState) {
@@ -159,7 +209,7 @@ fn render_launcher(
 
 fn render_footer(frame: &mut Frame, area: Rect) {
     let help = Paragraph::new(Span::raw(
-        " [Esc] Quit  [↑↓] Navigate  [Tab] Toggle Preview  [Enter] Select",
+        " [Esc] Quit  [Up/Down] Navigate  [Tab] Preview  [Enter] Execute",
     ))
     .style(styles::text_muted());
     frame.render_widget(help, area);
