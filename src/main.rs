@@ -212,7 +212,7 @@ fn render_launcher(
 
 fn render_footer(frame: &mut Frame, area: Rect) {
     let help = Paragraph::new(Span::raw(
-        " [Esc] Quit  [Up/Down] Navigate  [Tab] Preview  [Enter] Execute",
+        " [Esc] Quit  [Up/Down] Navigate  [Tab] Focus  [Enter] Execute  [Ctrl+U] Clear",
     ))
     .style(styles::text_muted());
     frame.render_widget(help, area);
