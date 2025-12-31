@@ -2,14 +2,14 @@ use nucleo::{Config, Nucleo, Utf32Str};
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
-    style::{Modifier, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, List, ListItem, ListState, StatefulWidget, Widget},
 };
 use std::sync::Arc;
 
 use crate::data::Action;
-use crate::theme::colors;
+use crate::theme::{colors, palette};
 
 pub struct FuzzyMatcher {
     nucleo: Nucleo<Arc<Action>>,
@@ -75,10 +75,6 @@ impl FuzzyMatcher {
             })
             .collect()
     }
-
-    pub fn result_count(&self) -> usize {
-        self.nucleo.snapshot().matched_item_count() as usize
-    }
 }
 
 impl Default for FuzzyMatcher {
@@ -106,10 +102,6 @@ impl FuzzyListState {
 
     pub fn selected(&self) -> Option<usize> {
         self.list_state.selected()
-    }
-
-    pub fn select(&mut self, index: Option<usize>) {
-        self.list_state.select(index);
     }
 
     pub fn select_next(&mut self, total: usize) {
@@ -185,11 +177,18 @@ impl Default for FuzzyListState {
 pub struct FuzzyList<'a> {
     items: &'a [(Arc<Action>, Vec<u32>)],
     block: Option<Block<'a>>,
+    focused: bool,
+    glow: f32,
 }
 
 impl<'a> FuzzyList<'a> {
     pub fn new(items: &'a [(Arc<Action>, Vec<u32>)]) -> Self {
-        Self { items, block: None }
+        Self {
+            items,
+            block: None,
+            focused: false,
+            glow: 0.0,
+        }
     }
 
     pub fn block(mut self, block: Block<'a>) -> Self {
@@ -197,17 +196,52 @@ impl<'a> FuzzyList<'a> {
         self
     }
 
-    fn render_action_line(action: &Action, match_indices: &[u32]) -> Line<'static> {
+    pub fn focused(mut self, focused: bool) -> Self {
+        self.focused = focused;
+        self
+    }
+
+    pub fn glow(mut self, glow: f32) -> Self {
+        self.glow = glow;
+        self
+    }
+
+    fn render_action_line(
+        &self,
+        action: &Action,
+        match_indices: &[u32],
+        is_selected: bool,
+    ) -> Line<'static> {
         let icon = action.display_icon();
         let cat_color = colors::category_color(action.category);
 
-        let icon_span = Span::styled(format!("{} ", icon), Style::default().fg(cat_color));
+        let icon_style = if is_selected && self.focused {
+            let boost = (self.glow * 30.0) as u8;
+            match cat_color {
+                Color::Rgb(r, g, b) => Style::default().fg(Color::Rgb(
+                    r.saturating_add(boost),
+                    g.saturating_add(boost),
+                    b.saturating_add(boost),
+                )),
+                _ => Style::default().fg(cat_color),
+            }
+        } else {
+            Style::default().fg(cat_color)
+        };
+
+        let icon_span = Span::styled(format!("{} ", icon), icon_style);
 
         let name = &action.name;
         let mut name_spans = Vec::new();
         let mut last_idx = 0;
 
         let name_len = name.len();
+        let highlight_color = if is_selected && self.focused {
+            palette::CYAN
+        } else {
+            colors::ACCENT_CYAN
+        };
+
         for &idx in match_indices {
             let idx = idx as usize;
             if idx >= name_len {
@@ -221,9 +255,9 @@ impl<'a> FuzzyList<'a> {
             }
             name_spans.push(Span::styled(
                 name[idx..idx + 1].to_string(),
-                colors::text_primary()
-                    .add_modifier(Modifier::BOLD)
-                    .fg(colors::ACCENT_CYAN),
+                Style::default()
+                    .fg(highlight_color)
+                    .add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
             ));
             last_idx = idx + 1;
         }
@@ -234,7 +268,12 @@ impl<'a> FuzzyList<'a> {
             ));
         }
 
-        let desc_span = Span::styled(format!("  {}", action.description), colors::text_muted());
+        let desc_style = if is_selected {
+            colors::text_secondary()
+        } else {
+            colors::text_muted()
+        };
+        let desc_span = Span::styled(format!("  {}", action.description), desc_style);
 
         let mut spans = vec![icon_span];
         spans.extend(name_spans);
@@ -264,9 +303,16 @@ impl<'a> StatefulWidget for FuzzyList<'a> {
             .iter()
             .enumerate()
             .map(|(i, (action, indices))| {
-                let line = Self::render_action_line(action, indices);
-                let style = if Some(i) == state.list_state.selected() {
-                    colors::list_selected()
+                let is_selected = Some(i) == state.list_state.selected();
+                let line = self.render_action_line(action, indices, is_selected);
+                let style = if is_selected {
+                    if self.focused {
+                        Style::default()
+                            .bg(palette::BG_ACTIVE)
+                            .add_modifier(Modifier::BOLD)
+                    } else {
+                        Style::default().bg(palette::BG_ELEVATED)
+                    }
                 } else {
                     Style::default()
                 };
@@ -274,9 +320,19 @@ impl<'a> StatefulWidget for FuzzyList<'a> {
             })
             .collect();
 
+        let highlight_style = if self.focused {
+            Style::default()
+                .bg(palette::BG_ACTIVE)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().bg(palette::BG_ELEVATED)
+        };
+
+        let highlight_symbol = if self.focused { "> " } else { "  " };
+
         let list = List::new(items)
-            .highlight_style(colors::list_selected())
-            .highlight_symbol("▶ ");
+            .highlight_style(highlight_style)
+            .highlight_symbol(highlight_symbol);
 
         StatefulWidget::render(list, inner_area, buf, &mut state.list_state);
     }

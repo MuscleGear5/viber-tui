@@ -1,7 +1,7 @@
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::{Modifier, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph, Widget, Wrap},
 };
@@ -138,11 +138,51 @@ impl<'a> Widget for ActionCard<'a> {
 
 pub struct ActionPreview<'a> {
     action: &'a Action,
+    focused: bool,
+    border_color: Option<Color>,
+    glow: f32,
 }
 
 impl<'a> ActionPreview<'a> {
     pub fn new(action: &'a Action) -> Self {
-        Self { action }
+        Self {
+            action,
+            focused: false,
+            border_color: None,
+            glow: 0.0,
+        }
+    }
+
+    pub fn focused(mut self, focused: bool) -> Self {
+        self.focused = focused;
+        self
+    }
+
+    pub fn border_color(mut self, color: Color) -> Self {
+        self.border_color = Some(color);
+        self
+    }
+
+    pub fn glow(mut self, glow: f32) -> Self {
+        self.glow = glow;
+        self
+    }
+
+    fn glow_color(&self, base: Color) -> Color {
+        if self.glow <= 0.0 {
+            return base;
+        }
+        match base {
+            Color::Rgb(r, g, b) => {
+                let boost = (self.glow * 30.0) as u8;
+                Color::Rgb(
+                    r.saturating_add(boost),
+                    g.saturating_add(boost),
+                    b.saturating_add(boost),
+                )
+            }
+            _ => base,
+        }
     }
 }
 
@@ -150,13 +190,28 @@ impl<'a> Widget for ActionPreview<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let cat_color = colors::category_color(self.action.category);
 
+        let base_border = self.border_color.unwrap_or(colors::BORDER_SUBTLE);
+        let border_color = if self.focused {
+            self.glow_color(base_border)
+        } else {
+            base_border
+        };
+
+        let title_style = if self.focused {
+            Style::default()
+                .fg(self.glow_color(cat_color))
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(cat_color).add_modifier(Modifier::BOLD)
+        };
+
         let block = Block::default()
             .title(Span::styled(
                 format!(" {} Preview ", self.action.name),
-                Style::default().fg(cat_color).add_modifier(Modifier::BOLD),
+                title_style,
             ))
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(colors::BORDER_SUBTLE))
+            .border_style(Style::default().fg(border_color))
             .padding(Padding::uniform(1));
 
         let inner = block.inner(area);

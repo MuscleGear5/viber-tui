@@ -99,7 +99,10 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<A
                             launcher_state.clear_input();
                         }
 
-                        (_, KeyCode::Tab) => launcher_state.toggle_preview(),
+                        (_, KeyCode::Tab) => launcher_state.cycle_focus(),
+                        (KeyModifiers::SHIFT, KeyCode::BackTab) => {
+                            launcher_state.cycle_focus_reverse()
+                        }
 
                         (_, KeyCode::Enter) => {
                             if let Some(action) = launcher_state.selected_action() {
