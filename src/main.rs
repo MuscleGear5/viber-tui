@@ -1,4 +1,9 @@
+mod agents;
 mod data;
+mod events;
+mod execute;
+mod integrations;
+mod render;
 mod theme;
 mod views;
 mod widgets;
@@ -11,18 +16,14 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{
-    backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout, Rect},
-    text::Span,
-    widgets::{Block, Borders, Paragraph},
-    Frame, Terminal,
-};
-use std::{io, process::Command, time::Duration};
+use ratatui::{backend::CrosstermBackend, Terminal};
+use std::{io, time::Duration};
 
 use data::{Action, ActionRegistry};
-use theme::{palette, styles, AnimationState, TICK_RATE_MS};
-use views::{Launcher, LauncherState};
+use execute::execute_action;
+use render::render;
+use theme::{AnimationState, TICK_RATE_MS};
+use views::{InputHandler, LauncherState};
 
 enum AppResult {
     Quit,
@@ -120,100 +121,4 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<A
         animation.tick();
         launcher_state.tick();
     }
-}
-
-fn execute_action(action: &Action) -> Result<()> {
-    println!(
-        "\x1b[36m>\x1b[0m Executing: \x1b[1;35m{}\x1b[0m",
-        action.name
-    );
-    println!("\x1b[90m  {}\x1b[0m", action.description);
-    println!();
-
-    match action.category {
-        data::ActionCategory::Mcp => {
-            println!("\x1b[33mMCP Tool:\x1b[0m {}", action.invocation);
-            println!("\x1b[90mCopy this to your AI assistant or run via MCP client\x1b[0m");
-        }
-        data::ActionCategory::Agent => {
-            println!("\x1b[32mAgent:\x1b[0m {}", action.invocation);
-            println!("\x1b[90mUse this agent type in your Task tool calls\x1b[0m");
-        }
-        data::ActionCategory::Skill => {
-            println!("\x1b[34mSkill:\x1b[0m {}", action.invocation);
-            println!("\x1b[90mInvoke this skill in your AI assistant\x1b[0m");
-        }
-        data::ActionCategory::Command => {
-            println!("\x1b[35mRunning command:\x1b[0m {}", action.invocation);
-            println!();
-
-            let status = Command::new("sh")
-                .arg("-c")
-                .arg(&action.invocation)
-                .status()?;
-
-            if !status.success() {
-                eprintln!("\x1b[31mCommand exited with status: {}\x1b[0m", status);
-            }
-        }
-    }
-
-    Ok(())
-}
-
-fn render(frame: &mut Frame, animation: &AnimationState, launcher_state: &mut LauncherState) {
-    let area = frame.area();
-
-    frame.render_widget(
-        Block::default().style(ratatui::style::Style::default().bg(palette::BG_VOID)),
-        area,
-    );
-
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(3),
-            Constraint::Min(0),
-            Constraint::Length(1),
-        ])
-        .split(area);
-
-    render_header(frame, chunks[0], animation);
-    render_launcher(frame, chunks[1], animation, launcher_state);
-    render_footer(frame, chunks[2]);
-}
-
-fn render_header(frame: &mut Frame, area: Rect, animation: &AnimationState) {
-    let viber_eye = animation.viber_eye();
-    let vibe_wave = animation.vibe_wave_short();
-
-    let header = Block::default()
-        .borders(Borders::BOTTOM)
-        .border_style(styles::border())
-        .style(ratatui::style::Style::default().bg(palette::BG_PANEL));
-
-    let inner = header.inner(area);
-    frame.render_widget(header, area);
-
-    let title =
-        Paragraph::new(format!("  VIBER TUI  {} {}", viber_eye, vibe_wave)).style(styles::title());
-    frame.render_widget(title, inner);
-}
-
-fn render_launcher(
-    frame: &mut Frame,
-    area: Rect,
-    animation: &AnimationState,
-    launcher_state: &mut LauncherState,
-) {
-    let launcher = Launcher::new(animation);
-    frame.render_stateful_widget(launcher, area, launcher_state);
-}
-
-fn render_footer(frame: &mut Frame, area: Rect) {
-    let help = Paragraph::new(Span::raw(
-        " [Esc] Quit  [Up/Down] Navigate  [Tab] Focus  [Enter] Execute  [Ctrl+U] Clear",
-    ))
-    .style(styles::text_muted());
-    frame.render_widget(help, area);
 }

@@ -17,6 +17,50 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
 
+# VIBER-TUI Hard Rules (ENFORCED)
+
+## BLOCKING VIOLATIONS - Code will be rejected if:
+
+| Rule | Violation | Fix |
+|------|-----------|-----|
+| MAX 150 LINES | Any file > 150 lines | Split into modules |
+| NO EMOJIS | Any emoji character | Use nerd font unicode `\u{XXXXX}` |
+| ICONS AS STR | `icon: char` | Must be `icon: &'static str` |
+| LSP CLEAN | Unverified edits | Run `lsp_diagnostics` after every edit |
+| TESTS PASS | `cargo test` fails | Fix before commit |
+| NO UNWRAP | `.unwrap()` in non-test | Use `?` or `expect("reason")` |
+
+## Session Init (MANDATORY)
+
+```bash
+readroadmap                    # Load project state
+bd ready                       # Check available work  
+cat roadmap/roadmap.md         # Quick status overview
+```
+
+## Tool Chain (USE THESE)
+
+| Phase | Tools |
+|-------|-------|
+| Research | `context7`, `grep_app`, `explore` agent, `librarian` agent |
+| Implement | `rust-engineer` subagent, `lsp_*` tools, `ast_grep` |
+| Verify | `lsp_diagnostics`, `cargo check`, `cargo test` |
+| Review | `code-reviewer` subagent |
+| Track | `roadmap` tools, `bd` CLI, `todowrite` |
+
+## Nerd Font Icons (REQUIRED)
+
+```rust
+pub const ICON_CHECK: &str = "\u{F00C0}";    // nf-md-check
+pub const ICON_ERROR: &str = "\u{F0159}";    // nf-md-close
+pub const ICON_WARN: &str = "\u{F0028}";     // nf-md-alert
+pub const ICON_INFO: &str = "\u{F064E}";     // nf-md-information
+pub const ICON_GEAR: &str = "\u{F013}";      // nf-fa-gear
+pub const ICON_CODE: &str = "\u{F121}";      // nf-fa-code
+```
+
+Reference: https://www.nerdfonts.com/cheat-sheet
+
 # Agent Instructions
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.

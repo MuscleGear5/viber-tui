@@ -1,3 +1,23 @@
+pub mod agents;
+pub mod buffer;
+pub mod chat;
+pub mod diff;
+pub mod help;
 pub mod launcher;
+pub mod lsp;
+pub mod questionnaire;
+pub mod spec;
+pub mod tasks;
+pub mod workflow;
 
-pub use launcher::{Launcher, LauncherState};
+pub use agents::{Agent, AgentStatus, Agents, AgentsState};
+pub use buffer::{BufferLine, BufferState, BufferView, Language};
+pub use chat::{Chat, ChatMessage, ChatState, MessageRole};
+pub use diff::{DiffHunk, DiffLine, DiffLineKind, DiffState, DiffView};
+pub use help::{HelpOverlay, HelpOverlayState, KeyBinding, KeySection};
+pub use launcher::{InputHandler, Launcher, LauncherState};
+pub use lsp::{Diagnostic, DiagnosticSeverity, HoverInfo, LspPanel, LspState, LspView, Reference};
+pub use questionnaire::{Choice, Question, QuestionType, QuestionnaireState, QuestionnaireView, ValidationResult};
+pub use spec::{ApprovalStatus, Comment, SectionType, SpecSection, SpecState, SpecView};
+pub use tasks::{Task, TaskPriority, TaskStatus, Tasks, TasksState};
+pub use workflow::{Phase, PhaseStatus, Workflow, WorkflowState};

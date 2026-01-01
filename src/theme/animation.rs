@@ -74,29 +74,8 @@ impl AnimationState {
         }
     }
 
-    pub fn viber_eye(&self) -> &'static str {
-        const EYES: [&str; 8] = ["👁", "👁", "👁", "◉", "◎", "○", "◎", "◉"];
-        EYES[self.viber_eye_frame]
-    }
-
-    pub fn viber_eye_text(&self) -> &'static str {
-        const EYES: [&str; 8] = ["(O)", "(O)", "(o)", "(·)", "(-)", "(·)", "(o)", "(O)"];
-        EYES[self.viber_eye_frame]
-    }
-
-    pub fn spinner(&self) -> &'static str {
-        const SPINNERS: [&str; 4] = ["◐", "◓", "◑", "◒"];
-        SPINNERS[self.spinner_frame]
-    }
-
-    pub fn spinner_braille(&self) -> &'static str {
-        const SPINNERS: [&str; 8] = ["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"];
-        SPINNERS[self.tick as usize % 8]
-    }
-
-    pub fn spinner_dots(&self) -> &'static str {
-        const DOTS: [&str; 4] = ["·  ", "·· ", "···", " ··"];
-        DOTS[self.dot_spinner_frame]
+    pub fn tick_count(&self) -> u64 {
+        self.tick
     }
 
     pub fn pulse(&self) -> f32 {
@@ -115,75 +94,23 @@ impl AnimationState {
         self.cursor_visible
     }
 
-    pub fn cursor(&self) -> &'static str {
-        if self.cursor_visible {
-            "█"
-        } else {
-            " "
-        }
+    pub fn loading_pos(&self) -> usize {
+        self.loading_pos
     }
 
-    pub fn cursor_thin(&self) -> &'static str {
-        if self.cursor_visible {
-            "▏"
-        } else {
-            " "
-        }
+    pub fn wave_offset(&self) -> usize {
+        self.wave_offset
     }
 
-    pub fn vibe_wave(&self) -> &'static str {
-        const WAVE: &str = "∿≋∿≋∿≋∿≋∿≋∿≋∿≋∿≋";
-        let start = self.wave_offset;
-        let end = start + 8;
-        &WAVE[start..end.min(WAVE.len())]
+    pub fn viber_eye_frame(&self) -> usize {
+        self.viber_eye_frame
     }
 
-    pub fn vibe_wave_short(&self) -> &'static str {
-        const WAVES: [&str; 4] = ["∿≋∿≋", "≋∿≋∿", "∿≋∿≋", "≋∿≋∿"];
-        WAVES[self.wave_offset % 4]
+    pub fn spinner_frame(&self) -> usize {
+        self.spinner_frame
     }
 
-    pub fn progress_bar(&self, width: usize, progress: f32) -> String {
-        let filled = (width as f32 * progress.clamp(0.0, 1.0)) as usize;
-        let empty = width.saturating_sub(filled);
-        format!("{}{}", "█".repeat(filled), "░".repeat(empty))
+    pub fn dot_spinner_frame(&self) -> usize {
+        self.dot_spinner_frame
     }
-
-    pub fn loading_bar(&self, width: usize) -> String {
-        let mut chars: Vec<char> = vec!['░'; width];
-        let pos = (self.loading_pos * width / 100) % width;
-        let highlight_width = 3.min(width);
-
-        for i in 0..highlight_width {
-            let idx = (pos + i) % width;
-            chars[idx] = '█';
-        }
-
-        chars.into_iter().collect()
-    }
-
-    pub fn status_indicator(&self, status: AgentStatus) -> &'static str {
-        match status {
-            AgentStatus::Running => self.spinner(),
-            AgentStatus::Thinking => self.spinner_braille(),
-            AgentStatus::Waiting => "◦",
-            AgentStatus::Paused => "⏸",
-            AgentStatus::Done => "✓",
-            AgentStatus::Error => "✗",
-        }
-    }
-
-    pub fn tick_count(&self) -> u64 {
-        self.tick
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AgentStatus {
-    Running,
-    Thinking,
-    Waiting,
-    Paused,
-    Done,
-    Error,
 }
