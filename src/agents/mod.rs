@@ -1,9 +1,11 @@
+mod dispatch;
 mod intervention;
 mod models;
 mod protocol;
 mod registry;
 mod undo;
 
+pub use dispatch::{AgentCommand, AgentEvent, AgentStatusSummary, DispatchResult};
 pub use intervention::{
     ConfirmationDialog, InterventionCommand, InterventionMonitor,
     TriggerAction, TriggerEvent, TriggerSeverity,

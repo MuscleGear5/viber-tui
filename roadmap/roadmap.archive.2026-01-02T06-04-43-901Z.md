@@ -22,13 +22,13 @@ Description: Primary TUI views for the VIBER workflow
 
 ### Feature 3: Infrastructure
 Description: Supporting systems for views and agents
-- [ ] 3.01 nvim-mcp integration client - socket connection, buffer sync, LSP relay
-- [ ] 3.02 Parallel agent dispatch - spawn/track multiple agents, status aggregation
-- [ ] 3.03 Toast notification system - slide-in alerts, auto-dismiss, action buttons
-- [ ] 3.04 Modal dialog system - centered overlays, confirm/cancel, form inputs
+- [x] 3.01 nvim-mcp integration client - socket connection, buffer sync, LSP relay (note: Starting action cards implementation) (note: Created NvimClient with socket connection, buffer sync, LSP relay. Exported types from mod.rs.)
+- [x] 3.02 Parallel agent dispatch - spawn/track multiple agents, status aggregation (note: Starting parallel agent dispatch) (note: Implemented spawn_parallel(), stop_all(), aggregate_status() in AgentController. Moved AgentCommand/AgentEvent to dispatch.rs. All files under 150 lines.)
+- [x] 3.03 Toast notification system - slide-in alerts, auto-dismiss, action buttons (note: Created src/widgets/toast/ module: models.rs (ToastLevel, ToastAction, Toast), state.rs (ToastState with queue management), render.rs (slide-in animation, progress bar, action buttons), widget.rs (ToastWidget).)
+- [x] 3.04 Modal dialog system - centered overlays, confirm/cancel, form inputs (note: Created src/widgets/modal/ module: models.rs (ModalKind, ModalButton, ModalField, Modal), state.rs (ModalState with form handling), render.rs (centered overlay, buttons, form fields), widget.rs (ModalWidget).)
 
 ### Feature 4: Widgets
 Description: Reusable widget components
-- [ ] 4.01 Canvas widget - Braille/block graphics for DAG rendering with Bezier edges
-- [ ] 4.02 Charts widgets - line chart, bar chart with gradients
-- [ ] 4.03 Calendar heatmap - GitHub-style activity visualization
+- [x] 4.01 Canvas widget - Braille/block graphics for DAG rendering with Bezier edges (note: Starting Canvas widget implementation) (note: Created src/widgets/canvas/ module: models.rs (Point, DrawCommand, BrushMode), state.rs (CanvasState with command queue), render.rs (Braille grid, Bezier curves via de Casteljau, line drawing), widget.rs (CanvasWidget).)
+- [x] 4.02 Charts widgets - line chart, bar chart with gradients (note: Already implemented in src/widgets/sparkline/ - supports Line (Braille), Bar, Dot styles with configurable colors, min/max display, and baseline.)
+- [x] 4.03 Calendar heatmap - GitHub-style activity visualization (note: Already implemented in src/widgets/heatmap/ - GitHub-style 53-week calendar with intensity colors, month/day labels, selection support.)

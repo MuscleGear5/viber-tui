@@ -1,28 +1,6 @@
 use std::time::Instant;
+use super::dispatch::{AgentEvent, AgentStatusSummary, DispatchResult};
 use super::models::{AgentConfig, AgentId, AgentInstance, AgentState};
-
-#[derive(Debug, Clone)]
-pub enum AgentCommand {
-    Spawn(AgentConfig),
-    Stop(AgentId),
-    Pause(AgentId),
-    Resume(AgentId),
-    Inject(AgentId, String),
-}
-
-#[derive(Debug, Clone)]
-pub enum AgentEvent {
-    Spawned(AgentId),
-    Started(AgentId),
-    Output(AgentId, String),
-    Progress(AgentId, u8),
-    Paused(AgentId),
-    Resumed(AgentId),
-    Completed(AgentId, String),
-    Failed(AgentId, String),
-    Stopped(AgentId),
-    Timeout(AgentId),
-}
 
 pub trait AgentProtocol {
     fn spawn(&mut self, config: AgentConfig) -> AgentId;
@@ -67,6 +45,38 @@ impl AgentController {
             self.events.push(AgentEvent::Timeout(*id));
         }
         timed_out
+    }
+
+    pub fn spawn_parallel(&mut self, configs: Vec<AgentConfig>) -> DispatchResult {
+        let mut agent_ids = Vec::with_capacity(configs.len());
+        for config in configs {
+            let id = self.spawn(config);
+            agent_ids.push(id);
+        }
+        DispatchResult { agent_ids, failed: Vec::new() }
+    }
+
+    pub fn stop_all(&mut self) -> Vec<AgentId> {
+        let active: Vec<_> = self.list_active();
+        for id in &active {
+            self.stop(*id);
+        }
+        active
+    }
+
+    pub fn aggregate_status(&self) -> AgentStatusSummary {
+        let mut summary = AgentStatusSummary::default();
+        for agent in &self.agents {
+            match agent.state {
+                AgentState::Pending => summary.pending += 1,
+                AgentState::Running => summary.running += 1,
+                AgentState::Paused => summary.paused += 1,
+                AgentState::Completed => summary.completed += 1,
+                AgentState::Failed => summary.failed += 1,
+                AgentState::Stopped => summary.stopped += 1,
+            }
+        }
+        summary
     }
 }
 
