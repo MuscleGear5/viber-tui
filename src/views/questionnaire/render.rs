@@ -2,7 +2,6 @@ use ratatui::{
     buffer::Buffer,
     layout::Rect,
     style::{Modifier, Style},
-    text::{Line, Span},
 };
 
 use crate::theme::colors::palette;

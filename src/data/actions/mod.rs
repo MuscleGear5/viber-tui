@@ -5,5 +5,5 @@
 mod models;
 mod registry;
 
-pub use models::{Action, ActionCategory, ActionsFile, Param, ParamType};
+pub use models::{Action, ActionCategory};
 pub use registry::ActionRegistry;

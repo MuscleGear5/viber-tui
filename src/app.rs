@@ -1,11 +1,21 @@
+use crate::agents::{AgentController, AgentRegistry, InterventionMonitor, UndoStack};
 use crate::data::{Action, ActionRegistry};
-use crate::theme::AnimationState;
+use crate::integrations::{BeadsClient, MemcordState};
+use crate::theme::{AnimationState, ToastManager};
 use crate::views::LauncherState;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum View {
     #[default]
     Launcher,
+    Chat,
+    Workflow,
+    Tasks,
+    Agents,
+    Buffer,
+    Diff,
+    Lsp,
+    Help,
 }
 
 #[derive(Debug, Clone)]
@@ -21,6 +31,14 @@ pub struct App {
     pub animation: AnimationState,
     pub launcher: LauncherState,
     pub current_view: View,
+    pub agents: AgentRegistry,
+    pub controller: AgentController,
+    pub undo: UndoStack,
+    pub intervention: InterventionMonitor,
+    pub toasts: ToastManager,
+    pub memcord: MemcordState,
+    pub beads: BeadsClient,
+    pub show_help: bool,
     should_quit: bool,
     pending_action: Option<Action>,
 }
@@ -33,6 +51,14 @@ impl App {
             animation: AnimationState::new(),
             launcher,
             current_view: View::default(),
+            agents: AgentRegistry::new(),
+            controller: AgentController::new(),
+            undo: UndoStack::new(50),
+            intervention: InterventionMonitor::new(),
+            toasts: ToastManager::new(),
+            memcord: MemcordState::new(),
+            beads: BeadsClient::new(),
+            show_help: false,
             should_quit: false,
             pending_action: None,
         }
@@ -58,6 +84,8 @@ impl App {
     pub fn tick(&mut self) {
         self.animation.tick();
         self.launcher.tick();
+        self.toasts.tick();
+        self.intervention.tick();
     }
 
     pub fn should_quit(&self) -> bool {
@@ -66,5 +94,9 @@ impl App {
 
     pub fn take_pending_action(&mut self) -> Option<Action> {
         self.pending_action.take()
+    }
+
+    pub fn toggle_help(&mut self) {
+        self.show_help = !self.show_help;
     }
 }

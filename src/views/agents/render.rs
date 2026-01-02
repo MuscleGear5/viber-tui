@@ -3,10 +3,10 @@ use ratatui::{
     style::{Color, Style},
     text::{Line, Span},
 };
-use super::state::{Agent, AgentStatus};
+use super::state::Agent;
 
 pub fn render_agent_card(agent: &Agent, selected: bool) -> Vec<Line<'static>> {
-    let border_color = if selected { palette::CYAN } else { palette::BORDER };
+    let _border_color = if selected { palette::CYAN } else { palette::BORDER };
     let status_icon = agent.status.icon();
     let status_color = agent.status.color();
     

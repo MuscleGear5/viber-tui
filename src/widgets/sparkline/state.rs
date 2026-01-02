@@ -87,3 +87,45 @@ impl SparklineState {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sparkline_empty() {
+        let mut state = SparklineState::default();
+        assert!(state.current().is_none());
+        assert!(state.min().is_none());
+        assert!(state.max().is_none());
+    }
+
+    #[test]
+    fn sparkline_push_and_stats() {
+        let mut state = SparklineState::default();
+        state.push(DataPoint::new(10.0));
+        state.push(DataPoint::new(20.0));
+        state.push(DataPoint::new(5.0));
+        assert_eq!(state.current(), Some(5.0));
+        assert_eq!(state.min(), Some(5.0));
+        assert_eq!(state.max(), Some(20.0));
+        assert_eq!(state.range(), Some((5.0, 20.0)));
+    }
+
+    #[test]
+    fn sparkline_max_points() {
+        let mut state = SparklineState::default().with_max_points(3);
+        state.push_many([1.0, 2.0, 3.0, 4.0, 5.0].map(DataPoint::new));
+        assert_eq!(state.data.len(), 3);
+        assert_eq!(state.current(), Some(5.0));
+    }
+
+    #[test]
+    fn sparkline_clear() {
+        let mut state = SparklineState::default();
+        state.push(DataPoint::new(100.0));
+        state.clear();
+        assert!(state.data.is_empty());
+        assert!(state.current().is_none());
+    }
+}

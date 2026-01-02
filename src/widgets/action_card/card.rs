@@ -6,7 +6,7 @@ use ratatui::{
     widgets::{Block, Borders, Padding, Paragraph, Widget, Wrap},
 };
 
-use crate::data::{Action, ActionCategory};
+use crate::data::Action;
 use crate::theme::colors;
 
 pub struct ActionCard<'a> {

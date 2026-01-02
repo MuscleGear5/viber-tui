@@ -46,7 +46,7 @@ impl<'a> StatefulWidget for Chat<'a> {
     }
 }
 
-fn render_messages_area(chat: &Chat, area: Rect, buf: &mut Buffer, state: &ChatState) {
+fn render_messages_area(_chat: &Chat, area: Rect, buf: &mut Buffer, state: &ChatState) {
     let block = Block::default()
         .title("\u{F4AD} Chat")
         .borders(Borders::ALL)

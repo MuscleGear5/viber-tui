@@ -6,7 +6,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, StatefulWidget, Widget},
 };
 
-use crate::theme::palette::{BORDER_FOCUS, CYAN, GREEN, MAGENTA, TEXT_SECONDARY};
+use crate::theme::palette::{BORDER_FOCUS, GREEN, MAGENTA, TEXT_SECONDARY};
 use super::{render::{render_phase_line, render_progress_bar}, state::WorkflowState};
 
 pub struct Workflow<'a> {

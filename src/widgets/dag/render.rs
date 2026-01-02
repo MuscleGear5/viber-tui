@@ -1,6 +1,6 @@
 use ratatui::{buffer::Buffer, layout::Rect, style::Style};
 use crate::theme::palette;
-use super::{state::DagState, models::NodeId};
+use super::state::DagState;
 
 const BRAILLE_BASE: char = '\u{2800}';
 const BRAILLE_DOTS: [[u8; 2]; 4] = [[0x01, 0x08], [0x02, 0x10], [0x04, 0x20], [0x40, 0x80]];

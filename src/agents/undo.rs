@@ -100,3 +100,30 @@ impl UndoStack {
     pub fn is_empty(&self) -> bool { self.checkpoints.is_empty() }
     pub fn clear(&mut self) { self.checkpoints.clear(); self.pending_changes.clear(); }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn undo_stack_operations() {
+        let mut stack = UndoStack::new(2);
+        assert!(stack.is_empty());
+        stack.record(Change::file_created(PathBuf::from("a.rs"), AgentId(1), "a"));
+        assert_eq!(stack.commit("first"), 1);
+        stack.record(Change::file_created(PathBuf::from("b.rs"), AgentId(1), "b"));
+        stack.commit("second");
+        assert_eq!(stack.len(), 2);
+        assert_eq!(stack.pop().expect("cp").description, "second");
+    }
+
+    #[test]
+    fn undo_stack_max_limit() {
+        let mut stack = UndoStack::new(2);
+        for i in 0..5 {
+            stack.record(Change::file_created(PathBuf::from(format!("{i}.rs")), AgentId(1), ""));
+            stack.commit(format!("cp{i}"));
+        }
+        assert_eq!(stack.len(), 2);
+    }
+}

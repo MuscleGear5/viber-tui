@@ -1,3 +1,3 @@
 pub mod actions;
 
-pub use actions::{Action, ActionCategory, ActionRegistry, Param, ParamType};
+pub use actions::{Action, ActionCategory, ActionRegistry};

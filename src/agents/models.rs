@@ -118,25 +118,33 @@ pub struct AgentInstance {
 
 impl AgentInstance {
     pub fn new(id: AgentId, config: AgentConfig) -> Self {
-        Self {
-            id,
-            config,
-            state: AgentState::Pending,
-            started_at: None,
-            metrics: AgentMetrics::default(),
-            output_buffer: Vec::new(),
-            retry_count: 0,
-        }
+        Self { id, config, state: AgentState::Pending, started_at: None, metrics: AgentMetrics::default(), output_buffer: Vec::new(), retry_count: 0 }
     }
 
-    pub fn elapsed(&self) -> Option<Duration> {
-        self.started_at.map(|start| start.elapsed())
-    }
+    pub fn elapsed(&self) -> Option<Duration> { self.started_at.map(|s| s.elapsed()) }
 
     pub fn is_timed_out(&self) -> bool {
-        match (self.config.timeout, self.elapsed()) {
-            (Some(timeout), Some(elapsed)) => elapsed > timeout,
-            _ => false,
-        }
+        matches!((self.config.timeout, self.elapsed()), (Some(t), Some(e)) if e > t)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn agent_state_behavior() {
+        assert!(!AgentState::Pending.is_active());
+        assert!(AgentState::Running.is_active());
+        assert!(AgentState::Completed.is_terminal());
+        assert!(!AgentState::Running.is_terminal());
+    }
+
+    #[test]
+    fn agent_instance_lifecycle() {
+        let config = AgentConfig::new(AgentKind::Coder, "coder", "task");
+        let agent = AgentInstance::new(AgentId::new(1), config);
+        assert_eq!(agent.state, AgentState::Pending);
+        assert!(!agent.is_timed_out());
     }
 }

@@ -6,5 +6,3 @@ pub mod styles;
 
 pub use animation::*;
 pub use colors::*;
-pub use indicators::*;
-pub use spinners::*;
