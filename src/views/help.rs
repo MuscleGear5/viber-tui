@@ -86,6 +86,10 @@ impl HelpOverlayState {
 
 pub struct HelpOverlay;
 
+impl HelpOverlay {
+    pub fn new() -> Self { Self }
+}
+
 impl StatefulWidget for HelpOverlay {
     type State = HelpOverlayState;
 

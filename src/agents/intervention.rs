@@ -93,4 +93,5 @@ impl InterventionMonitor {
     pub fn resume(&mut self, agent_id: &AgentId) { self.paused_agents.retain(|id| id != agent_id); }
     pub fn events(&self) -> &[TriggerEvent] { &self.events }
     pub fn clear_events(&mut self) { self.events.clear(); }
+    pub fn tick(&mut self) {}
 }

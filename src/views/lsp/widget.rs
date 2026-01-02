@@ -14,6 +14,10 @@ use super::state::{LspPanel, LspState};
 
 pub struct LspView;
 
+impl LspView {
+    pub fn new() -> Self { Self }
+}
+
 impl StatefulWidget for LspView {
     type State = LspState;
 

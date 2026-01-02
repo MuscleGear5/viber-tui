@@ -55,6 +55,7 @@ pub struct ToastManager {
 }
 
 impl ToastManager {
+    pub fn new() -> Self { Self::default() }
     pub fn push(&mut self, toast: Toast) { self.toasts.push(toast); }
     pub fn tick(&mut self) { self.toasts.retain(|t| !t.is_expired()); }
     pub fn active(&self) -> Option<&Toast> { self.toasts.first() }

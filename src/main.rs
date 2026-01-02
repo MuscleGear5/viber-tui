@@ -1,4 +1,5 @@
 mod agents;
+mod app;
 mod data;
 mod events;
 mod execute;
@@ -19,11 +20,12 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::{io, time::Duration};
 
-use data::{Action, ActionRegistry};
+use app::App;
+use data::Action;
 use execute::execute_action;
 use render::render;
-use theme::{AnimationState, TICK_RATE_MS};
-use views::{InputHandler, LauncherState};
+use theme::TICK_RATE_MS;
+use views::InputHandler;
 
 enum AppResult {
     Quit,
@@ -61,12 +63,17 @@ fn main() -> Result<()> {
 }
 
 fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<AppResult> {
-    let registry = ActionRegistry::load_from_file("data/actions.yaml")?;
-    let mut animation = AnimationState::new();
-    let mut launcher_state = LauncherState::new(&registry);
+    let mut app = App::load()?;
 
     loop {
-        terminal.draw(|frame| render(frame, &animation, &mut launcher_state))?;
+        terminal.draw(|frame| render(frame, &mut app))?;
+
+        if app.should_quit() {
+            return match app.take_pending_action() {
+                Some(action) => Ok(AppResult::Execute(action)),
+                None => Ok(AppResult::Quit),
+            };
+        }
 
         if event::poll(Duration::from_millis(TICK_RATE_MS))? {
             if let Event::Key(key) = event::read()? {
@@ -74,51 +81,51 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<A
                     match (key.modifiers, key.code) {
                         (_, KeyCode::Esc) => return Ok(AppResult::Quit),
                         (KeyModifiers::CONTROL, KeyCode::Char('c')) => return Ok(AppResult::Quit),
+                        (_, KeyCode::Char('?')) => app.toggle_help(),
 
                         (_, KeyCode::Up) | (KeyModifiers::CONTROL, KeyCode::Char('p')) => {
-                            launcher_state.select_previous();
+                            app.launcher.select_previous();
                         }
                         (_, KeyCode::Down) | (KeyModifiers::CONTROL, KeyCode::Char('n')) => {
-                            launcher_state.select_next();
+                            app.launcher.select_next();
                         }
-                        (_, KeyCode::PageUp) => launcher_state.page_up(),
-                        (_, KeyCode::PageDown) => launcher_state.page_down(),
+                        (_, KeyCode::PageUp) => app.launcher.page_up(),
+                        (_, KeyCode::PageDown) => app.launcher.page_down(),
                         (_, KeyCode::Home) | (KeyModifiers::CONTROL, KeyCode::Char('a')) => {
-                            launcher_state.move_cursor_start();
+                            app.launcher.move_cursor_start();
                         }
                         (_, KeyCode::End) | (KeyModifiers::CONTROL, KeyCode::Char('e')) => {
-                            launcher_state.move_cursor_end();
+                            app.launcher.move_cursor_end();
                         }
 
-                        (_, KeyCode::Left) => launcher_state.move_cursor_left(),
-                        (_, KeyCode::Right) => launcher_state.move_cursor_right(),
-                        (_, KeyCode::Backspace) => launcher_state.delete_char(),
+                        (_, KeyCode::Left) => app.launcher.move_cursor_left(),
+                        (_, KeyCode::Right) => app.launcher.move_cursor_right(),
+                        (_, KeyCode::Backspace) => app.launcher.delete_char(),
                         (_, KeyCode::Delete) | (KeyModifiers::CONTROL, KeyCode::Char('d')) => {
-                            launcher_state.delete_char_forward();
+                            app.launcher.delete_char_forward();
                         }
                         (KeyModifiers::CONTROL, KeyCode::Char('u')) => {
-                            launcher_state.clear_input();
+                            app.launcher.clear_input();
                         }
 
-                        (_, KeyCode::Tab) => launcher_state.cycle_focus(),
+                        (_, KeyCode::Tab) => app.launcher.cycle_focus(),
                         (KeyModifiers::SHIFT, KeyCode::BackTab) => {
-                            launcher_state.cycle_focus_reverse()
+                            app.launcher.cycle_focus_reverse()
                         }
 
                         (_, KeyCode::Enter) => {
-                            if let Some(action) = launcher_state.selected_action() {
+                            if let Some(action) = app.launcher.selected_action() {
                                 return Ok(AppResult::Execute(action.clone()));
                             }
                         }
 
-                        (_, KeyCode::Char(c)) => launcher_state.insert_char(c),
+                        (_, KeyCode::Char(c)) => app.launcher.insert_char(c),
                         _ => {}
                     }
                 }
             }
         }
 
-        animation.tick();
-        launcher_state.tick();
+        app.tick();
     }
 }

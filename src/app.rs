@@ -2,7 +2,10 @@ use crate::agents::{AgentController, AgentRegistry, InterventionMonitor, UndoSta
 use crate::data::{Action, ActionRegistry};
 use crate::integrations::{BeadsClient, MemcordState};
 use crate::theme::{AnimationState, ToastManager};
-use crate::views::LauncherState;
+use crate::views::{
+    AgentsState, BufferState, ChatState, DiffState, HelpOverlayState, LauncherState, LspState,
+    TasksState, WorkflowState,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum View {
@@ -29,8 +32,17 @@ pub enum AppAction {
 pub struct App {
     pub registry: ActionRegistry,
     pub animation: AnimationState,
-    pub launcher: LauncherState,
     pub current_view: View,
+    pub show_help: bool,
+    pub launcher: LauncherState,
+    pub chat: ChatState,
+    pub workflow: WorkflowState,
+    pub tasks: TasksState,
+    pub agents_view: AgentsState,
+    pub buffer: BufferState,
+    pub diff: DiffState,
+    pub lsp: LspState,
+    pub help: HelpOverlayState,
     pub agents: AgentRegistry,
     pub controller: AgentController,
     pub undo: UndoStack,
@@ -38,7 +50,6 @@ pub struct App {
     pub toasts: ToastManager,
     pub memcord: MemcordState,
     pub beads: BeadsClient,
-    pub show_help: bool,
     should_quit: bool,
     pending_action: Option<Action>,
 }
@@ -49,8 +60,17 @@ impl App {
         Self {
             registry,
             animation: AnimationState::new(),
-            launcher,
             current_view: View::default(),
+            show_help: false,
+            launcher,
+            chat: ChatState::default(),
+            workflow: WorkflowState::default(),
+            tasks: TasksState::default(),
+            agents_view: AgentsState::default(),
+            buffer: BufferState::default(),
+            diff: DiffState::default(),
+            lsp: LspState::default(),
+            help: HelpOverlayState::default(),
             agents: AgentRegistry::new(),
             controller: AgentController::new(),
             undo: UndoStack::new(50),
@@ -58,7 +78,6 @@ impl App {
             toasts: ToastManager::new(),
             memcord: MemcordState::new(),
             beads: BeadsClient::new(),
-            show_help: false,
             should_quit: false,
             pending_action: None,
         }

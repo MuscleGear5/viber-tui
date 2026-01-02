@@ -12,6 +12,10 @@ use super::{
 
 pub struct Agents;
 
+impl Agents {
+    pub fn new() -> Self { Self }
+}
+
 impl StatefulWidget for Agents {
     type State = AgentsState;
 

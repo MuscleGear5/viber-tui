@@ -10,6 +10,10 @@ use super::state::BufferState;
 
 pub struct BufferView;
 
+impl BufferView {
+    pub fn new() -> Self { Self }
+}
+
 impl StatefulWidget for BufferView {
     type State = BufferState;
     

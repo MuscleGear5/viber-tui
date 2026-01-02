@@ -10,4 +10,12 @@ pub mod spec;
 pub mod tasks;
 pub mod workflow;
 
+pub use agents::{Agents, AgentsState};
+pub use buffer::{BufferView, BufferState};
+pub use chat::{Chat, ChatState};
+pub use diff::{DiffView, DiffState};
+pub use help::{HelpOverlay, HelpOverlayState};
 pub use launcher::{InputHandler, Launcher, LauncherState};
+pub use lsp::{LspView, LspState};
+pub use tasks::{Tasks, TasksState};
+pub use workflow::{Workflow, WorkflowState};
