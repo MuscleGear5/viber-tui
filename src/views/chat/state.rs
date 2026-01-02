@@ -50,6 +50,9 @@ pub struct ChatState {
     pub cursor_pos: usize,
     pub scroll_offset: usize,
     pub input_focused: bool,
+    pub input_history: Vec<String>,
+    pub history_index: Option<usize>,
+    pub stream_reveal_pos: usize,
 }
 
 impl Default for ChatState {
@@ -66,6 +69,9 @@ impl ChatState {
             cursor_pos: 0,
             scroll_offset: 0,
             input_focused: true,
+            input_history: Vec::new(),
+            history_index: None,
+            stream_reveal_pos: 0,
         }
     }
 
@@ -111,5 +117,62 @@ impl ChatState {
 
     pub fn current_streaming_message(&mut self) -> Option<&mut ChatMessage> {
         self.messages.iter_mut().rev().find(|m| m.is_streaming)
+    }
+
+    pub fn history_up(&mut self) {
+        if self.input_history.is_empty() {
+            return;
+        }
+        let new_idx = match self.history_index {
+            None => self.input_history.len() - 1,
+            Some(i) => i.saturating_sub(1),
+        };
+        self.history_index = Some(new_idx);
+        self.input = self.input_history[new_idx].clone();
+        self.cursor_pos = self.input.len();
+    }
+
+    pub fn history_down(&mut self) {
+        let Some(idx) = self.history_index else { return };
+        if idx + 1 >= self.input_history.len() {
+            self.history_index = None;
+            self.input.clear();
+            self.cursor_pos = 0;
+        } else {
+            self.history_index = Some(idx + 1);
+            self.input = self.input_history[idx + 1].clone();
+            self.cursor_pos = self.input.len();
+        }
+    }
+
+    pub fn submit_input(&mut self) -> Option<String> {
+        let text = self.take_input();
+        if text.is_empty() {
+            return None;
+        }
+        self.input_history.push(text.clone());
+        self.history_index = None;
+        Some(text)
+    }
+
+    pub fn advance_stream_reveal(&mut self) {
+        if let Some(msg) = self.messages.iter().rev().find(|m| m.is_streaming) {
+            let content_len = msg.content.len();
+            if self.stream_reveal_pos < content_len {
+                self.stream_reveal_pos += 1;
+            }
+        }
+    }
+
+    pub fn revealed_content(&self) -> Option<&str> {
+        self.messages
+            .iter()
+            .rev()
+            .find(|m| m.is_streaming)
+            .map(|m| &m.content[..self.stream_reveal_pos.min(m.content.len())])
+    }
+
+    pub fn reset_stream_reveal(&mut self) {
+        self.stream_reveal_pos = 0;
     }
 }

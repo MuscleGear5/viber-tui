@@ -17,6 +17,56 @@ pub enum TriggerAction {
     Stop,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InterventionCommand {
+    StopAgent(AgentId),
+    StopAll,
+    UndoLast,
+    InjectPrompt(AgentId),
+    ResumeAgent(AgentId),
+}
+
+#[derive(Debug, Clone)]
+pub struct ConfirmationDialog {
+    pub command: InterventionCommand,
+    pub title: String,
+    pub message: String,
+    pub confirm_key: char,
+    pub cancel_key: char,
+}
+
+impl ConfirmationDialog {
+    pub fn for_stop(agent_id: AgentId) -> Self {
+        Self {
+            command: InterventionCommand::StopAgent(agent_id),
+            title: String::from("Stop Agent"),
+            message: format!("Stop agent #{}? This cannot be undone.", agent_id.0),
+            confirm_key: 'y',
+            cancel_key: 'n',
+        }
+    }
+
+    pub fn for_stop_all() -> Self {
+        Self {
+            command: InterventionCommand::StopAll,
+            title: String::from("Stop All Agents"),
+            message: String::from("Stop ALL running agents? This cannot be undone."),
+            confirm_key: 'y',
+            cancel_key: 'n',
+        }
+    }
+
+    pub fn for_undo() -> Self {
+        Self {
+            command: InterventionCommand::UndoLast,
+            title: String::from("Undo Last Action"),
+            message: String::from("Revert the last checkpoint?"),
+            confirm_key: 'y',
+            cancel_key: 'n',
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct InterventionRule {
     pub name: String,
@@ -93,5 +143,7 @@ impl InterventionMonitor {
     pub fn resume(&mut self, agent_id: &AgentId) { self.paused_agents.retain(|id| id != agent_id); }
     pub fn events(&self) -> &[TriggerEvent] { &self.events }
     pub fn clear_events(&mut self) { self.events.clear(); }
+    pub fn paused_agents(&self) -> &[AgentId] { &self.paused_agents }
+    pub fn stop_all(&mut self) { self.paused_agents.clear(); }
     pub fn tick(&mut self) {}
 }

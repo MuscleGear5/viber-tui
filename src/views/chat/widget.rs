@@ -1,7 +1,7 @@
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::{Modifier, Style},
+    style::Style,
     widgets::{Block, Borders, Paragraph, StatefulWidget, Widget},
 };
 
@@ -93,18 +93,33 @@ fn render_input_area(chat: &Chat, area: Rect, buf: &mut Buffer, state: &ChatStat
     let inner = block.inner(area);
     block.render(area, buf);
 
-    let input_style = if state.input_focused {
-        Style::default().fg(palette::TEXT_PRIMARY).add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(palette::TEXT_DIM)
-    };
+    if state.input.is_empty() && !state.input_focused {
+        let placeholder = Paragraph::new("Type a message...")
+            .style(Style::default().fg(palette::TEXT_DIM));
+        placeholder.render(inner, buf);
+        return;
+    }
 
-    let display_text = if state.input.is_empty() && state.input_focused {
-        "Type a message...".to_string()
-    } else {
-        state.input.clone()
-    };
+    let input_style = Style::default().fg(palette::TEXT_PRIMARY);
+    let cursor_visible = chat.animation.cursor_visible() && state.input_focused;
 
-    let paragraph = Paragraph::new(display_text).style(input_style);
-    paragraph.render(inner, buf);
+    for (i, ch) in state.input.chars().enumerate() {
+        let x = inner.x + i as u16;
+        if x >= inner.x + inner.width {
+            break;
+        }
+        let style = if cursor_visible && i == state.cursor_pos {
+            input_style.bg(palette::CYAN).fg(palette::BG_VOID)
+        } else {
+            input_style
+        };
+        buf.set_string(x, inner.y, ch.to_string(), style);
+    }
+
+    if cursor_visible && state.cursor_pos >= state.input.len() {
+        let x = inner.x + state.input.len() as u16;
+        if x < inner.x + inner.width {
+            buf.set_string(x, inner.y, " ", input_style.bg(palette::CYAN));
+        }
+    }
 }
