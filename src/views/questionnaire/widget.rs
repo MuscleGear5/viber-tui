@@ -55,7 +55,7 @@ impl StatefulWidget for QuestionnaireView {
                         .iter()
                         .map(|c| (c.id.clone(), c.label.clone(), c.selected))
                         .collect();
-                    render_choice_list(&choices, chunks[3], buf, Some(0));
+                    render_choice_list(&choices, chunks[3], buf, Some(state.choice_index));
                 }
                 QuestionType::Confirm => {
                     let confirmed = question.answer == "yes";

@@ -1,10 +1,12 @@
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::Style,
+    style::{Modifier, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, Paragraph, StatefulWidget, Widget},
 };
 use crate::theme::colors::palette;
+use super::nvim::NvimSyncStatus;
 use super::render::{gutter_width, render_code_line, render_line_number};
 use super::state::BufferState;
 
@@ -14,18 +16,45 @@ impl BufferView {
     pub fn new() -> Self { Self }
 }
 
+fn render_nvim_status(status: &NvimSyncStatus) -> Span<'static> {
+    match status {
+        NvimSyncStatus::Disconnected => Span::styled(
+            " \u{F0318} Disconnected ",
+            Style::default().fg(palette::TEXT_DIM),
+        ),
+        NvimSyncStatus::Connecting => Span::styled(
+            " \u{F0AA8} Connecting... ",
+            Style::default().fg(palette::WARNING).add_modifier(Modifier::BOLD),
+        ),
+        NvimSyncStatus::Synced => Span::styled(
+            " \u{F05E0} Synced ",
+            Style::default().fg(palette::SUCCESS),
+        ),
+        NvimSyncStatus::Stale => Span::styled(
+            " \u{F0026} Stale ",
+            Style::default().fg(palette::ERROR),
+        ),
+    }
+}
+
 impl StatefulWidget for BufferView {
     type State = BufferState;
     
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let title = state.path.as_deref().unwrap_or("[No File]");
         let modified_indicator = if state.is_modified { " [+]" } else { "" };
+        let nvim_status = render_nvim_status(&state.nvim.sync_status);
         
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(palette::BORDER_FOCUS))
-            .title(format!(" {} {} ", title, modified_indicator))
-            .title_style(Style::default().fg(palette::CYAN));
+            .title(Line::from(vec![
+                Span::raw(" "),
+                Span::styled(title, Style::default().fg(palette::CYAN)),
+                Span::raw(modified_indicator),
+                Span::raw(" "),
+            ]))
+            .title_bottom(Line::from(vec![nvim_status]));
         
         let inner = block.inner(area);
         block.render(area, buf);

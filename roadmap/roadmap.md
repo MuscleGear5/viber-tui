@@ -15,10 +15,10 @@ Description: Central VIBER God Agent system with status panel, chat, and interve
 
 ### Feature 2: Views Implementation
 Description: Primary TUI views for the VIBER workflow
-- [ ] 2.01 Questionnaire view - multichoice spec questions with keyboard nav
-- [ ] 2.02 Workflow DAG view - phase visualization with Canvas widget
-- [ ] 2.03 Tasks view - Kanban board (Backlog/InProgress/Review/Done columns)
-- [ ] 2.04 Buffer view - live nvim-mcp sync showing file edits in real-time
+- [x] 2.01 Questionnaire view - multichoice spec questions with keyboard nav (note: Starting questionnaire view implementation) (note: Added choice_index, choice_up/down/toggle methods for keyboard nav)
+- [x] 2.02 Workflow DAG view - phase visualization with Canvas widget (note: Starting workflow DAG view) (note: DAG widget already implemented with braille edges, auto-layout. Exported DagNode, DagState, DagView from mod.rs.)
+- [x] 2.03 Tasks view - Kanban board (Backlog/InProgress/Review/Done columns) (note: Starting tasks Kanban view) (note: Added kanban.rs with KanbanColumn, KanbanState, Kanban widget. 4 columns (Backlog/InProgress/Review/Done) with h/l nav.)
+- [x] 2.04 Buffer view - live nvim-mcp sync showing file edits in real-time (note: Starting buffer view nvim-mcp sync) (note: Added nvim sync status to buffer widget title bar. Shows connection state and buffer ID.)
 
 ### Feature 3: Infrastructure
 Description: Supporting systems for views and agents
