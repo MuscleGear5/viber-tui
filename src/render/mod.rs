@@ -4,13 +4,14 @@ pub use cache::{LayoutCache, LazyValue, RenderCache};
 
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
+    style::{Color, Style},
     text::Span,
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
 use crate::app::{App, View};
-use crate::theme::{palette, styles, AnimationState};
+use crate::theme::{indicators::ToastLevel, palette, styles, AnimationState};
 use crate::views::{
     Agents, BufferView, Chat, DiffView, HelpOverlay, Launcher, LspView, Tasks, Workflow,
 };
@@ -35,6 +36,8 @@ pub fn render(frame: &mut Frame, app: &mut App) {
         let overlay = HelpOverlay::new();
         frame.render_stateful_widget(overlay, area, &mut app.help);
     }
+
+    render_toasts(frame, area, &app.toasts);
 }
 
 fn render_content(frame: &mut Frame, area: Rect, app: &mut App) {
@@ -109,4 +112,33 @@ fn render_footer(frame: &mut Frame, area: Rect, current_view: View) {
     };
     let help = Paragraph::new(Span::raw(help_text)).style(styles::text_muted());
     frame.render_widget(help, area);
+}
+
+fn render_toasts(frame: &mut Frame, area: Rect, toasts: &crate::theme::ToastManager) {
+    if let Some(toast) = toasts.active() {
+        let width = 40.min(area.width.saturating_sub(4));
+        let x = area.width.saturating_sub(width + 2);
+        let y = 1;
+        let toast_area = Rect::new(x, y, width, 3);
+
+        let (bg, fg) = match toast.level {
+            ToastLevel::Info => (palette::INFO, palette::TEXT_PRIMARY),
+            ToastLevel::Success => (palette::SUCCESS, palette::BG_VOID),
+            ToastLevel::Warning => (palette::WARNING, palette::BG_VOID),
+            ToastLevel::Error => (palette::ERROR, palette::TEXT_PRIMARY),
+        };
+
+        let icon = toast.level.icon();
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(fg))
+            .style(Style::default().bg(bg).fg(fg));
+
+        let inner = block.inner(toast_area);
+        frame.render_widget(block, toast_area);
+
+        let msg = format!("{} {}", icon, toast.message);
+        let text = Paragraph::new(msg).style(Style::default().fg(fg));
+        frame.render_widget(text, inner);
+    }
 }
