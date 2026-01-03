@@ -15,6 +15,7 @@ use crate::theme::{indicators::ToastLevel, palette, styles, AnimationState};
 use crate::views::{
     Agents, BufferView, Chat, DiffView, HelpOverlay, Launcher, LspView, Tasks, Workflow,
 };
+use crate::widgets::modal::ModalWidget;
 
 pub fn render(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
@@ -38,6 +39,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     }
 
     render_toasts(frame, area, &app.toasts);
+    render_modal(frame, area, &app.modal);
 }
 
 fn render_content(frame: &mut Frame, area: Rect, app: &mut App) {
@@ -140,5 +142,12 @@ fn render_toasts(frame: &mut Frame, area: Rect, toasts: &crate::theme::ToastMana
         let msg = format!("{} {}", icon, toast.message);
         let text = Paragraph::new(msg).style(Style::default().fg(fg));
         frame.render_widget(text, inner);
+    }
+}
+
+fn render_modal(frame: &mut Frame, _area: Rect, modal: &crate::widgets::modal::ModalState) {
+    if modal.has_modal() {
+        let widget = ModalWidget::new(modal);
+        widget.render_overlay(frame);
     }
 }

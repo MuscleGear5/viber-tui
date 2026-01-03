@@ -8,6 +8,7 @@ use crate::views::{
     AgentsState, BufferListState, BufferState, ChatState, DiffState, HelpOverlayState,
     LauncherState, LspState, TasksState, WorkflowState,
 };
+use crate::widgets::modal::ModalState;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum View {
@@ -56,6 +57,7 @@ pub struct App {
     pub nvim: NvimClient,
     pub nvim_mcp: Option<NvimMcpRunner>,
     pub agent_pool: AgentPool,
+    pub modal: ModalState,
     should_quit: bool,
     pending_action: Option<Action>,
 }
@@ -88,6 +90,7 @@ impl App {
             nvim: NvimClient::new(),
             nvim_mcp: None,
             agent_pool: AgentPool::new(),
+            modal: ModalState::new(),
             should_quit: false,
             pending_action: None,
         }

@@ -102,6 +102,40 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<A
 }
 
 fn handle_event(app: &mut App, event: AppEvent) -> AppAction {
+    if app.modal.has_modal() {
+        match event {
+            AppEvent::Cancel => {
+                app.modal.dismiss();
+                return AppAction::Continue;
+            }
+            AppEvent::Select => {
+                if let Some(_key) = app.modal.selected_key() {
+                    app.modal.dismiss();
+                }
+                return AppAction::Continue;
+            }
+            AppEvent::NextFocus => {
+                app.modal.select_next();
+                return AppAction::Continue;
+            }
+            AppEvent::PrevFocus => {
+                app.modal.select_prev();
+                return AppAction::Continue;
+            }
+            AppEvent::Char(c) => {
+                if app.modal.handle_key(c).is_none() {
+                    app.modal.input_char(c);
+                }
+                return AppAction::Continue;
+            }
+            AppEvent::Backspace => {
+                app.modal.input_backspace();
+                return AppAction::Continue;
+            }
+            _ => return AppAction::Continue,
+        }
+    }
+
     match &event {
         AppEvent::ForceQuit => return AppAction::Quit,
         AppEvent::SwitchView(c) => {
