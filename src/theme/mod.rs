@@ -6,4 +6,4 @@ pub mod styles;
 
 pub use animation::*;
 pub use colors::*;
-pub use indicators::ToastManager;
+pub use indicators::{Toast, ToastManager};

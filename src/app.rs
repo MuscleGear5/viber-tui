@@ -1,6 +1,8 @@
 use crate::agents::{AgentController, AgentRegistry, InterventionMonitor, UndoStack};
 use crate::data::{Action, ActionRegistry};
-use crate::integrations::{BeadsClient, MemcordState};
+use crate::integrations::{
+    BeadsClient, MemcordState, NvimClient, NvimMcpCommand, NvimMcpRunner, NvimMcpResponse,
+};
 use crate::theme::{AnimationState, ToastManager};
 use crate::views::{
     AgentsState, BufferState, ChatState, DiffState, HelpOverlayState, LauncherState, LspState,
@@ -50,6 +52,8 @@ pub struct App {
     pub toasts: ToastManager,
     pub memcord: MemcordState,
     pub beads: BeadsClient,
+    pub nvim: NvimClient,
+    pub nvim_mcp: Option<NvimMcpRunner>,
     should_quit: bool,
     pending_action: Option<Action>,
 }
@@ -78,6 +82,8 @@ impl App {
             toasts: ToastManager::new(),
             memcord: MemcordState::new(),
             beads: BeadsClient::new(),
+            nvim: NvimClient::new(),
+            nvim_mcp: None,
             should_quit: false,
             pending_action: None,
         }
@@ -105,6 +111,64 @@ impl App {
         self.launcher.tick();
         self.toasts.tick();
         self.intervention.tick();
+        self.poll_nvim_updates();
+    }
+
+    fn poll_nvim_updates(&mut self) {
+        if let Some(ref mut runner) = self.nvim_mcp {
+            while let Some(update) = runner.try_recv() {
+                match update {
+                    NvimMcpResponse::Targets(targets) => {
+                        if let Some(first) = targets.first() {
+                            let _ = runner.send(NvimMcpCommand::Connect {
+                                target: first.socket_path.clone(),
+                            });
+                        }
+                    }
+                    NvimMcpResponse::Connected { connection_id } => {
+                        self.nvim.connection_id = Some(connection_id);
+                        self.nvim.state = crate::integrations::NvimConnectionState::Connected;
+                        let _ = runner.send(NvimMcpCommand::ListBuffers);
+                        let _ = runner.send(NvimMcpCommand::LspClients);
+                    }
+                    NvimMcpResponse::Buffers(buffers) => {
+                        self.nvim.buffers.clear();
+                        for buf in buffers {
+                            self.nvim.buffers.insert(buf.id, crate::integrations::NvimBuffer {
+                                id: buf.id,
+                                name: buf.name,
+                                line_count: buf.line_count as usize,
+                                is_modified: buf.modified,
+                            });
+                        }
+                    }
+                    NvimMcpResponse::Cursor { line, column, buffer_id } => {
+                        self.nvim.cursor = Some(crate::integrations::NvimCursor {
+                            buffer_id,
+                            line: line as usize,
+                            column: column as usize,
+                        });
+                    }
+                    NvimMcpResponse::LspClients(clients) => {
+                        self.nvim.lsp_clients = clients.into_iter().map(|c| {
+                            crate::integrations::LspClient {
+                                name: c.name,
+                                root_dir: c.root_dir,
+                            }
+                        }).collect();
+                    }
+                    NvimMcpResponse::Error { message } => {
+                        self.nvim.set_error();
+                        self.toasts.push(crate::theme::Toast::error(&message));
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    pub fn set_nvim_runner(&mut self, runner: NvimMcpRunner) {
+        self.nvim_mcp = Some(runner);
     }
 
     pub fn should_quit(&self) -> bool {
@@ -117,5 +181,9 @@ impl App {
 
     pub fn toggle_help(&mut self) {
         self.show_help = !self.show_help;
+    }
+
+    pub fn switch_view(&mut self, view: View) {
+        self.current_view = view;
     }
 }
