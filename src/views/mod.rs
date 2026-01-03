@@ -11,7 +11,7 @@ pub mod tasks;
 pub mod workflow;
 
 pub use agents::{Agents, AgentsState};
-pub use buffer::{BufferView, BufferState};
+pub use buffer::{BufferListState, BufferListWidget, BufferView, BufferState};
 pub use chat::{Chat, ChatState};
 pub use diff::{DiffView, DiffState};
 pub use help::{HelpOverlay, HelpOverlayState};

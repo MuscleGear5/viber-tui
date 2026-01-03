@@ -5,8 +5,8 @@ use crate::integrations::{
 };
 use crate::theme::{AnimationState, ToastManager};
 use crate::views::{
-    AgentsState, BufferState, ChatState, DiffState, HelpOverlayState, LauncherState, LspState,
-    TasksState, WorkflowState,
+    AgentsState, BufferListState, BufferState, ChatState, DiffState, HelpOverlayState,
+    LauncherState, LspState, TasksState, WorkflowState,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -42,6 +42,7 @@ pub struct App {
     pub tasks: TasksState,
     pub agents_view: AgentsState,
     pub buffer: BufferState,
+    pub buffer_list: BufferListState,
     pub diff: DiffState,
     pub lsp: LspState,
     pub help: HelpOverlayState,
@@ -72,6 +73,7 @@ impl App {
             tasks: TasksState::default(),
             agents_view: AgentsState::default(),
             buffer: BufferState::default(),
+            buffer_list: BufferListState::default(),
             diff: DiffState::default(),
             lsp: LspState::default(),
             help: HelpOverlayState::default(),
@@ -133,14 +135,23 @@ impl App {
                     }
                     NvimMcpResponse::Buffers(buffers) => {
                         self.nvim.buffers.clear();
-                        for buf in buffers {
+                        for buf in &buffers {
                             self.nvim.buffers.insert(buf.id, crate::integrations::NvimBuffer {
                                 id: buf.id,
-                                name: buf.name,
+                                name: buf.name.clone(),
                                 line_count: buf.line_count as usize,
                                 is_modified: buf.modified,
                             });
                         }
+                        let nvim_buffers: Vec<_> = buffers.into_iter().map(|b| {
+                            crate::integrations::NvimBuffer {
+                                id: b.id,
+                                name: b.name,
+                                line_count: b.line_count as usize,
+                                is_modified: b.modified,
+                            }
+                        }).collect();
+                        self.buffer_list.set_buffers(nvim_buffers);
                     }
                     NvimMcpResponse::Cursor { line, column, buffer_id } => {
                         self.nvim.cursor = Some(crate::integrations::NvimCursor {
