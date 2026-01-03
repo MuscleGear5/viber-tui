@@ -1,5 +1,6 @@
 pub mod action_card;
 pub mod canvas;
+pub mod charts;
 pub mod dag;
 pub mod fuzzy_list;
 pub mod heatmap;
@@ -14,3 +15,4 @@ pub use modal::{Modal, ModalButton, ModalKind, ModalState, ModalWidget};
 pub use toast::{ToastAction, ToastLevel, ToastNotification, ToastState, ToastWidget};
 pub use viber_status::{ViberState, ViberStatusPanel, ViberPhase, ViberPower, VibeLevel};
 pub use canvas::{BrushMode, CanvasState, CanvasWidget, DrawCommand, Point};
+pub use charts::{Chart, ChartConfig, ChartKind, ChartState, Series};
