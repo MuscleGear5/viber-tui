@@ -1,4 +1,4 @@
-use crate::agents::{AgentController, AgentRegistry, InterventionMonitor, UndoStack};
+use crate::agents::{AgentController, AgentEvent, AgentPool, AgentRegistry, InterventionMonitor, UndoStack};
 use crate::data::{Action, ActionRegistry};
 use crate::integrations::{
     BeadsClient, MemcordState, NvimClient, NvimMcpCommand, NvimMcpRunner, NvimMcpResponse,
@@ -55,6 +55,7 @@ pub struct App {
     pub beads: BeadsClient,
     pub nvim: NvimClient,
     pub nvim_mcp: Option<NvimMcpRunner>,
+    pub agent_pool: AgentPool,
     should_quit: bool,
     pending_action: Option<Action>,
 }
@@ -86,6 +87,7 @@ impl App {
             beads: BeadsClient::new(),
             nvim: NvimClient::new(),
             nvim_mcp: None,
+            agent_pool: AgentPool::new(),
             should_quit: false,
             pending_action: None,
         }
@@ -114,6 +116,7 @@ impl App {
         self.toasts.tick();
         self.intervention.tick();
         self.poll_nvim_updates();
+        self.poll_agent_events();
     }
 
     fn poll_nvim_updates(&mut self) {
@@ -180,6 +183,29 @@ impl App {
 
     pub fn set_nvim_runner(&mut self, runner: NvimMcpRunner) {
         self.nvim_mcp = Some(runner);
+    }
+
+    fn poll_agent_events(&mut self) {
+        for event in self.agent_pool.poll_events() {
+            match event {
+                AgentEvent::Spawned(id) => {
+                    self.toasts.push(crate::theme::Toast::info(&format!("Agent {} spawned", id.0)));
+                }
+                AgentEvent::Started(id) => {
+                    self.toasts.push(crate::theme::Toast::info(&format!("Agent {} started", id.0)));
+                }
+                AgentEvent::Completed(id, _output) => {
+                    self.toasts.push(crate::theme::Toast::success(&format!("Agent {} completed", id.0)));
+                }
+                AgentEvent::Failed(id, err) => {
+                    self.toasts.push(crate::theme::Toast::error(&format!("Agent {} failed: {}", id.0, err)));
+                }
+                AgentEvent::Stopped(id) => {
+                    self.toasts.push(crate::theme::Toast::warning(&format!("Agent {} stopped", id.0)));
+                }
+                _ => {}
+            }
+        }
     }
 
     pub fn should_quit(&self) -> bool {
