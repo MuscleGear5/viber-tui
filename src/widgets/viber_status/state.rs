@@ -47,3 +47,55 @@ impl ViberState {
         (self.spec_compliance * 100.0) as u8
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_default_state() {
+        let state = ViberState::new();
+        assert_eq!(state.phase, ViberPhase::Idle);
+        assert_eq!(state.vibe_level, VibeLevel::Nominal);
+        assert_eq!(state.active_agents, 0);
+        assert!(!state.is_intervening);
+    }
+
+    #[test]
+    fn test_builder_pattern() {
+        let state = ViberState::new()
+            .with_phase(ViberPhase::Implementation)
+            .with_agents(3, 5)
+            .with_vibe(VibeLevel::Warning, 0.75);
+
+        assert_eq!(state.phase, ViberPhase::Implementation);
+        assert_eq!(state.active_agents, 3);
+        assert_eq!(state.total_agents, 5);
+        assert_eq!(state.vibe_level, VibeLevel::Warning);
+        assert_eq!(state.compliance_percent(), 75);
+    }
+
+    #[test]
+    fn test_compliance_clamping() {
+        let over = ViberState::new().with_vibe(VibeLevel::Nominal, 1.5);
+        assert_eq!(over.spec_compliance, 1.0);
+
+        let under = ViberState::new().with_vibe(VibeLevel::Nominal, -0.5);
+        assert_eq!(under.spec_compliance, 0.0);
+    }
+
+    #[test]
+    fn test_intervention_lifecycle() {
+        let mut state = ViberState::new();
+        assert!(!state.is_intervening);
+        assert!(state.active_power.is_none());
+
+        state.set_intervening(ViberPower::Stop);
+        assert!(state.is_intervening);
+        assert_eq!(state.active_power, Some(ViberPower::Stop));
+
+        state.clear_intervention();
+        assert!(!state.is_intervening);
+        assert!(state.active_power.is_none());
+    }
+}
