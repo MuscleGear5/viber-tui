@@ -153,6 +153,35 @@ fn handle_event(app: &mut App, event: AppEvent) -> AppAction {
             }
             return AppAction::Quit;
         }
+        AppEvent::ViberChat => {
+            return AppAction::SwitchView(View::Chat);
+        }
+        AppEvent::ViberStop => {
+            app.agent_pool.stop_current();
+            app.toasts.push(crate::theme::Toast::warning("Agent stopped"));
+            return AppAction::Continue;
+        }
+        AppEvent::ViberStopAll => {
+            app.agent_pool.stop_all();
+            app.toasts.push(crate::theme::Toast::warning("All agents stopped"));
+            return AppAction::Continue;
+        }
+        AppEvent::ViberUndo => {
+            if let Some(checkpoint) = app.undo.pop() {
+                app.toasts.push(crate::theme::Toast::info(&format!("Undo: {}", checkpoint.description)));
+            } else {
+                app.toasts.push(crate::theme::Toast::warning("Nothing to undo"));
+            }
+            return AppAction::Continue;
+        }
+        AppEvent::ViberPrompt => {
+            app.modal.show_input("Inject Prompt", "prompt", "Enter prompt to inject:");
+            return AppAction::Continue;
+        }
+        AppEvent::ViberRedirect => {
+            app.modal.show_input("Redirect Agent", "redirect", "Enter new instruction:");
+            return AppAction::Continue;
+        }
         _ => {}
     }
 

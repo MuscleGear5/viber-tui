@@ -100,6 +100,17 @@ impl AgentPool {
         let _ = self.command_tx.send(PoolCommand::StopAll);
     }
 
+    /// Stop the most recently spawned active agent
+    pub fn stop_current(&mut self) -> Option<AgentId> {
+        let id = self.tasks
+            .values()
+            .filter(|t| t.state.is_active())
+            .max_by_key(|t| t.id.0)
+            .map(|t| t.id)?;
+        self.stop(id);
+        Some(id)
+    }
+
     pub fn poll_events(&mut self) -> Vec<AgentEvent> {
         let mut events = Vec::new();
         while let Ok(event) = self.event_rx.try_recv() {

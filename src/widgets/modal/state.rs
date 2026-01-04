@@ -113,4 +113,13 @@ impl ModalState {
     pub fn input_value(&self) -> Option<&str> {
         self.active().and_then(|m| m.input_value.as_deref())
     }
+
+    pub fn show_input(&mut self, title: &str, key: &str, placeholder: &str) -> u64 {
+        use super::models::{Modal, ModalButton, ModalKind};
+        let modal = Modal::new(ModalKind::Input, title, placeholder)
+            .with_input(placeholder)
+            .with_button(ModalButton::new("Cancel", 'c'))
+            .with_button(ModalButton::new("Submit", 's').primary());
+        self.push(modal)
+    }
 }

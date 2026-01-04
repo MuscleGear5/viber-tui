@@ -132,4 +132,57 @@ mod tests {
         let key = KeyEvent::new_with_kind(KeyCode::Up, KeyModifiers::NONE, KeyEventKind::Press);
         assert_eq!(map_key_event(key), Some(AppEvent::Up));
     }
+
+    #[test]
+    fn test_viber_chat_hotkey() {
+        let key = KeyEvent::new_with_kind(
+            KeyCode::Char('V'),
+            KeyModifiers::NONE,
+            KeyEventKind::Press,
+        );
+        assert_eq!(map_key_event(key), Some(AppEvent::ViberChat));
+    }
+
+    #[test]
+    fn test_viber_undo_hotkey() {
+        let key = KeyEvent::new_with_kind(
+            KeyCode::Char('U'),
+            KeyModifiers::NONE,
+            KeyEventKind::Press,
+        );
+        assert_eq!(map_key_event(key), Some(AppEvent::ViberUndo));
+    }
+
+    #[test]
+    fn test_viber_prompt_hotkey() {
+        let key = KeyEvent::new_with_kind(
+            KeyCode::Char('P'),
+            KeyModifiers::NONE,
+            KeyEventKind::Press,
+        );
+        assert_eq!(map_key_event(key), Some(AppEvent::ViberPrompt));
+    }
+
+    #[test]
+    fn test_viber_redirect_hotkey() {
+        let key = KeyEvent::new_with_kind(
+            KeyCode::Char('R'),
+            KeyModifiers::NONE,
+            KeyEventKind::Press,
+        );
+        assert_eq!(map_key_event(key), Some(AppEvent::ViberRedirect));
+    }
+
+    #[test]
+    fn test_viber_context_esc_mapping() {
+        assert_eq!(ViberContext::Idle.map_esc(), AppEvent::Cancel);
+        assert_eq!(ViberContext::AgentsRunning.map_esc(), AppEvent::ViberStop);
+        assert_eq!(ViberContext::ConfirmPending.map_esc(), AppEvent::Cancel);
+    }
+
+    #[test]
+    fn test_viber_context_shift_esc() {
+        assert_eq!(ViberContext::Idle.map_shift_esc(), None);
+        assert_eq!(ViberContext::AgentsRunning.map_shift_esc(), Some(AppEvent::ViberStopAll));
+    }
 }
