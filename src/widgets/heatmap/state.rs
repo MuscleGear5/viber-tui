@@ -73,3 +73,42 @@ impl HeatmapState {
         self.entries.values()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add_and_get_entry() {
+        let mut state = HeatmapState::new(2026);
+        let entry = HeatmapEntry {
+            date: Date::new(2026, 1, 15),
+            value: 5,
+            label: None,
+        };
+        state.add_entry(entry);
+        let retrieved = state.get_entry(&Date::new(2026, 1, 15));
+        assert!(retrieved.is_some());
+        assert_eq!(retrieved.unwrap().value, 5);
+    }
+
+    #[test]
+    fn test_max_value_tracking() {
+        let mut state = HeatmapState::new(2026);
+        state.add_entry(HeatmapEntry { date: Date::new(2026, 1, 1), value: 3, label: None });
+        state.add_entry(HeatmapEntry { date: Date::new(2026, 1, 2), value: 10, label: None });
+        state.add_entry(HeatmapEntry { date: Date::new(2026, 1, 3), value: 5, label: None });
+        assert_eq!(state.max_value(), 10);
+    }
+
+    #[test]
+    fn test_selection_navigation() {
+        let mut state = HeatmapState::new(2026);
+        state.select(5, 3);
+        assert_eq!(state.selected(), Some((5, 3)));
+        state.move_selection(2, -1);
+        assert_eq!(state.selected(), Some((7, 2)));
+        state.clear_selection();
+        assert_eq!(state.selected(), None);
+    }
+}
