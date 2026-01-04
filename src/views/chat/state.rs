@@ -176,3 +176,74 @@ impl ChatState {
         self.stream_reveal_pos = 0;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_chat_message_new() {
+        let msg = ChatMessage::new(MessageRole::User, "Hello");
+        assert_eq!(msg.role, MessageRole::User);
+        assert_eq!(msg.content, "Hello");
+        assert!(!msg.is_streaming);
+    }
+
+    #[test]
+    fn test_chat_message_streaming() {
+        let mut msg = ChatMessage::streaming(MessageRole::Assistant);
+        assert!(msg.is_streaming);
+        assert!(msg.content.is_empty());
+
+        msg.append("Hello ");
+        msg.append("world");
+        assert_eq!(msg.content, "Hello world");
+
+        msg.finish_streaming();
+        assert!(!msg.is_streaming);
+    }
+
+    #[test]
+    fn test_chat_state_input() {
+        let mut state = ChatState::new();
+        state.insert_char('H');
+        state.insert_char('i');
+        assert_eq!(state.input, "Hi");
+        assert_eq!(state.cursor_pos, 2);
+
+        state.delete_char();
+        assert_eq!(state.input, "H");
+        assert_eq!(state.cursor_pos, 1);
+    }
+
+    #[test]
+    fn test_chat_state_submit() {
+        let mut state = ChatState::new();
+        state.input = "test message".to_string();
+        state.cursor_pos = 12;
+
+        let submitted = state.submit_input();
+        assert_eq!(submitted, Some("test message".to_string()));
+        assert!(state.input.is_empty());
+        assert_eq!(state.cursor_pos, 0);
+        assert_eq!(state.input_history.len(), 1);
+    }
+
+    #[test]
+    fn test_chat_state_history() {
+        let mut state = ChatState::new();
+        state.input_history = vec!["first".to_string(), "second".to_string()];
+
+        state.history_up();
+        assert_eq!(state.input, "second");
+        assert_eq!(state.history_index, Some(1));
+
+        state.history_up();
+        assert_eq!(state.input, "first");
+        assert_eq!(state.history_index, Some(0));
+
+        state.history_down();
+        assert_eq!(state.input, "second");
+        assert_eq!(state.history_index, Some(1));
+    }
+}
