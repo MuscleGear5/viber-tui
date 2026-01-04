@@ -100,3 +100,76 @@ impl QuestionnaireState {
         true
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use super::super::models::Choice;
+
+    fn sample_questions() -> Vec<Question> {
+        vec![
+            Question::text("name", "What is your name?"),
+            Question::single_choice(
+                "color",
+                "Pick a color",
+                vec![
+                    Choice::new("r", "Red"),
+                    Choice::new("g", "Green"),
+                    Choice::new("b", "Blue"),
+                ],
+            ),
+        ]
+    }
+
+    #[test]
+    fn test_new_and_current_question() {
+        let state = QuestionnaireState::new("Test", sample_questions());
+        assert_eq!(state.title, "Test");
+        assert_eq!(state.current_index, 0);
+        assert!(state.current_question().is_some());
+        assert_eq!(state.current_question().unwrap().id, "name");
+    }
+
+    #[test]
+    fn test_navigation_next_prev() {
+        let mut state = QuestionnaireState::new("Nav", sample_questions());
+        state.input_buffer = "Alice".to_string();
+        state.next();
+        assert_eq!(state.current_index, 1);
+        assert_eq!(state.questions[0].answer, "Alice");
+        state.prev();
+        assert_eq!(state.current_index, 0);
+        state.prev();
+        assert_eq!(state.current_index, 0);
+    }
+
+    #[test]
+    fn test_choice_navigation_and_toggle() {
+        let mut state = QuestionnaireState::new("Choice", sample_questions());
+        state.next();
+        assert_eq!(state.choice_index, 0);
+        state.choice_down();
+        assert_eq!(state.choice_index, 1);
+        state.choice_down();
+        assert_eq!(state.choice_index, 2);
+        state.choice_down();
+        assert_eq!(state.choice_index, 2);
+        state.choice_up();
+        assert_eq!(state.choice_index, 1);
+        state.toggle_choice();
+        assert_eq!(state.questions[1].answer, "g");
+        assert!(state.questions[1].choices[1].selected);
+    }
+
+    #[test]
+    fn test_submit_validation() {
+        let mut state = QuestionnaireState::new("Submit", sample_questions());
+        assert!(!state.submit());
+        assert!(!state.completed);
+        state.input_buffer = "Bob".to_string();
+        state.next();
+        state.toggle_choice();
+        assert!(state.submit());
+        assert!(state.completed);
+    }
+}
