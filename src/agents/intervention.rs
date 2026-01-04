@@ -147,3 +147,69 @@ impl InterventionMonitor {
     pub fn stop_all(&mut self) { self.paused_agents.clear(); }
     pub fn tick(&mut self) {}
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rule_matches_pattern() {
+        let rule = InterventionRule::new(
+            "dangerous",
+            "rm -rf",
+            TriggerSeverity::Fatal,
+            TriggerAction::Stop,
+        );
+        assert!(rule.matches("running rm -rf /tmp"));
+        assert!(!rule.matches("removing files safely"));
+    }
+
+    #[test]
+    fn test_disabled_rule_does_not_match() {
+        let mut rule = InterventionRule::new(
+            "disabled",
+            "pattern",
+            TriggerSeverity::Warning,
+            TriggerAction::Log,
+        );
+        rule.enabled = false;
+        assert!(!rule.matches("text with pattern inside"));
+    }
+
+    #[test]
+    fn test_monitor_check_triggers_event() {
+        let mut monitor = InterventionMonitor::with_default_rules();
+        let agent = AgentId(1);
+        let event = monitor.check(agent, "executing rm -rf / now");
+        assert!(event.is_some());
+        let e = event.unwrap();
+        assert_eq!(e.rule_name, "rm_rf");
+        assert_eq!(e.severity, TriggerSeverity::Fatal);
+        assert!(monitor.is_paused(&AgentId(1)));
+    }
+
+    #[test]
+    fn test_monitor_resume_agent() {
+        let mut monitor = InterventionMonitor::new();
+        let agent = AgentId(42);
+        monitor.check(agent, "sudo rm important");
+        monitor.add_rule(InterventionRule::new(
+            "sudo",
+            "sudo",
+            TriggerSeverity::Critical,
+            TriggerAction::Pause,
+        ));
+        monitor.check(agent, "sudo rm important");
+        assert!(monitor.is_paused(&agent));
+        monitor.resume(&agent);
+        assert!(!monitor.is_paused(&agent));
+    }
+
+    #[test]
+    fn test_confirmation_dialog_for_stop() {
+        let dialog = ConfirmationDialog::for_stop(AgentId(5));
+        assert!(matches!(dialog.command, InterventionCommand::StopAgent(AgentId(5))));
+        assert_eq!(dialog.confirm_key, 'y');
+        assert_eq!(dialog.cancel_key, 'n');
+    }
+}
