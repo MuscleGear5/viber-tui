@@ -1,4 +1,6 @@
 use super::models::{Phase, PhaseStatus, ViberPhase};
+use super::dag::TaskGraph;
+use super::executor::TaskExecutor;
 
 #[derive(Debug)]
 pub struct WorkflowState {
@@ -7,6 +9,9 @@ pub struct WorkflowState {
     pub selected_index: usize,
     pub scroll_offset: usize,
     pub edit_cycle_count: u32,
+
+    pub task_graph: Option<TaskGraph>,
+    pub task_executor: Option<TaskExecutor>,
 }
 
 impl Default for WorkflowState {
@@ -23,6 +28,8 @@ impl WorkflowState {
             selected_index: 0,
             scroll_offset: 0,
             edit_cycle_count: 0,
+            task_graph: None,
+            task_executor: None,
         }
     }
 
@@ -119,5 +126,17 @@ impl WorkflowState {
         }
         self.current_phase = Some(ViberPhase::Implementation);
         self.selected_index = impl_idx;
+    }
+
+    pub fn initialize_task_graph(&mut self, graph: TaskGraph) {
+        self.task_graph = Some(graph);
+    }
+
+    pub fn execute_tasks(&self) -> Result<(), String> {
+        if let (Some(graph), Some(executor)) = (self.task_graph.as_ref(), self.task_executor.as_ref()) {
+            executor.execute()
+        } else {
+            Err("Task graph or executor not initialized".to_string())
+        }
     }
 }
