@@ -92,3 +92,39 @@ impl Task {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_task_priority_icons() {
+        assert!(!TaskPriority::Critical.icon().is_empty());
+        assert!(!TaskPriority::Backlog.icon().is_empty());
+    }
+
+    #[test]
+    fn test_task_status_icons() {
+        assert!(!TaskStatus::Pending.icon().is_empty());
+        assert!(!TaskStatus::Done.icon().is_empty());
+    }
+
+    #[test]
+    fn test_task_builder() {
+        let task = Task::new("t1", "Test task")
+            .priority(TaskPriority::High)
+            .status(TaskStatus::InProgress);
+        assert_eq!(task.id, "t1");
+        assert_eq!(task.priority, TaskPriority::High);
+        assert_eq!(task.status, TaskStatus::InProgress);
+    }
+
+    #[test]
+    fn test_task_defaults() {
+        let task = Task::new("t2", "Another");
+        assert_eq!(task.priority, TaskPriority::Medium);
+        assert_eq!(task.status, TaskStatus::Pending);
+        assert!(task.parent_id.is_none());
+        assert!(task.tags.is_empty());
+    }
+}

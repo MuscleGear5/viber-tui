@@ -63,3 +63,63 @@ impl TasksState {
             .and_then(|&i| self.tasks.get(i))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::views::tasks::state::{TaskPriority, TaskStatus};
+
+    #[test]
+    fn test_tasks_state_new() {
+        let state = TasksState::new();
+        assert!(state.tasks.is_empty());
+        assert!(state.filter_query.is_empty());
+        assert_eq!(state.selected_index, 0);
+    }
+
+    #[test]
+    fn test_set_tasks_and_filter() {
+        let mut state = TasksState::new();
+        state.set_tasks(vec![
+            Task::new("1", "Implement feature"),
+            Task::new("2", "Fix bug"),
+            Task::new("3", "Implement tests"),
+        ]);
+        assert_eq!(state.filtered_indices.len(), 3);
+        
+        state.set_filter("Implement".into());
+        assert_eq!(state.filtered_indices.len(), 2);
+        assert_eq!(state.filtered_indices, vec![0, 2]);
+    }
+
+    #[test]
+    fn test_navigation() {
+        let mut state = TasksState::new();
+        state.set_tasks(vec![
+            Task::new("1", "A"),
+            Task::new("2", "B"),
+            Task::new("3", "C"),
+        ]);
+        assert_eq!(state.selected_index, 0);
+        
+        state.select_next();
+        assert_eq!(state.selected_index, 1);
+        
+        state.select_next();
+        state.select_next();
+        assert_eq!(state.selected_index, 2);
+        
+        state.select_prev();
+        assert_eq!(state.selected_index, 1);
+    }
+
+    #[test]
+    fn test_selected_task() {
+        let mut state = TasksState::new();
+        assert!(state.selected_task().is_none());
+        
+        state.set_tasks(vec![Task::new("t1", "Task One")]);
+        let task = state.selected_task().unwrap();
+        assert_eq!(task.id, "t1");
+    }
+}
