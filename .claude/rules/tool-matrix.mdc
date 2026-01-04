@@ -1,0 +1,76 @@
+# Tool Selection Matrix
+
+## Research Phase
+
+| Need | Tool | Profile |
+|------|------|---------|
+| Codebase exploration | `explore` agent (background) | - |
+| External docs | `librarian` agent (background) | - |
+| Library API docs | `context7_resolve-library-id` + `context7_query-docs` | - |
+| Real code examples | `grep_app_searchGitHub` | - |
+| Web search | `websearch_exa_web_search_exa` | - |
+| AST pattern search | `ast_grep_search` | - |
+
+## Implementation Phase
+
+| Need | Tool | Notes |
+|------|------|-------|
+| Read file | `read` | Always before edit |
+| Edit file | `edit` | Single precise change |
+| Write new file | `write` | New files only |
+| Find files | `glob` | Pattern matching |
+| Search content | `grep` | Regex in files |
+| Run commands | `bash` | cargo, git, etc |
+
+## LSP Tools (Rust)
+
+| Need | Tool |
+|------|------|
+| Errors/warnings | `lsp_diagnostics` |
+| Type info | `lsp_hover` |
+| Go to definition | `lsp_goto_definition` |
+| Find usages | `lsp_find_references` |
+| File outline | `lsp_document_symbols` |
+| Workspace search | `lsp_workspace_symbols` |
+| Rename symbol | `lsp_rename` |
+| Code actions | `lsp_code_actions` |
+
+## Subagent Delegation
+
+| Domain | Subagent |
+|--------|----------|
+| Rust systems code | `rust-engineer` |
+| UI components | `frontend-developer` |
+| Architecture review | `architect-reviewer` |
+| Code review | `code-reviewer` |
+| Testing | `qa-expert` |
+| Performance | `performance-engineer` |
+| Debugging | `debugger` |
+
+## NCP Profiles
+
+| Profile | Use For |
+|---------|---------|
+| `ncp-coding` | Primary dev work |
+| `ncp-research` | Deep research |
+| `ncp-creative` | UI/UX design ideas |
+| `ncp-productivity` | Task management |
+
+## Memory (memcord)
+
+| Action | Tool |
+|--------|------|
+| Create/select slot | `memcord_name` |
+| Save context | `memcord_save` |
+| Auto-summarize | `memcord_save_progress` |
+| Recall | `memcord_read` |
+| Search | `memcord_search` |
+| Query | `memcord_query` |
+
+## Tracking
+
+| System | Use For |
+|--------|---------|
+| `roadmap` tools | High-level milestones |
+| `todowrite` | Session tasks |
+| `bd` CLI | Issue tracking |

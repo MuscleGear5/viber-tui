@@ -1,0 +1,2 @@
+jsonschema_rs==0.38.1
+mkdocs==1.6.1

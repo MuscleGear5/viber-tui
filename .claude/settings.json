@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "preCommit": ["cargo check", "cargo test"],
+    "postEdit": ["lsp_diagnostics"]
+  },
+  "conventions": {
+    "maxFileLines": 150,
+    "icons": "nerdfonts-only",
+    "noEmojis": true,
+    "testRequired": true,
+    "lspVerification": true
+  }
+}

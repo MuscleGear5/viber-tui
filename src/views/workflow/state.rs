@@ -1,11 +1,12 @@
-use super::models::{Phase, PhaseStatus};
+use super::models::{Phase, PhaseStatus, ViberPhase};
 
 #[derive(Debug)]
 pub struct WorkflowState {
     pub phases: Vec<Phase>,
-    pub current_phase: Option<usize>,
+    pub current_phase: Option<ViberPhase>,
     pub selected_index: usize,
     pub scroll_offset: usize,
+    pub edit_cycle_count: u32,
 }
 
 impl Default for WorkflowState {
@@ -21,21 +22,19 @@ impl WorkflowState {
             current_phase: None,
             selected_index: 0,
             scroll_offset: 0,
+            edit_cycle_count: 0,
         }
     }
 
     fn viber_phases() -> Vec<Phase> {
-        vec![
-            Phase::new(0, "Discovery"),
-            Phase::new(1, "Requirements").with_deps(vec![0]),
-            Phase::new(2, "Spec").with_deps(vec![1]),
-            Phase::new(3, "Design").with_deps(vec![2]),
-            Phase::new(4, "Implementation").with_deps(vec![3]),
-            Phase::new(5, "Testing").with_deps(vec![4]),
-            Phase::new(6, "Review").with_deps(vec![5]),
-            Phase::new(7, "Integration").with_deps(vec![6]),
-            Phase::new(8, "Deployment").with_deps(vec![7]),
-        ]
+        ViberPhase::ALL
+            .iter()
+            .enumerate()
+            .map(|(i, vp)| {
+                let deps = if i == 0 { vec![] } else { vec![i - 1] };
+                Phase::new(i, vp.name()).with_deps(deps)
+            })
+            .collect()
     }
 
     pub fn overall_progress(&self) -> u8 {
@@ -80,7 +79,7 @@ impl WorkflowState {
             return false;
         }
         if let Some(current) = self.current_phase {
-            if let Some(phase) = self.phases.get_mut(current) {
+            if let Some(phase) = self.phases.get_mut(current.index()) {
                 if phase.status == PhaseStatus::InProgress {
                     phase.complete();
                 }
@@ -88,7 +87,7 @@ impl WorkflowState {
         }
         if let Some(phase) = self.phases.get_mut(phase_id) {
             phase.start();
-            self.current_phase = Some(phase_id);
+            self.current_phase = ViberPhase::from_index(phase_id);
             self.selected_index = phase_id;
             return true;
         }
@@ -97,7 +96,7 @@ impl WorkflowState {
 
     pub fn complete_current(&mut self) {
         if let Some(current) = self.current_phase {
-            if let Some(phase) = self.phases.get_mut(current) {
+            if let Some(phase) = self.phases.get_mut(current.index()) {
                 phase.complete();
             }
         }
@@ -105,9 +104,20 @@ impl WorkflowState {
 
     pub fn fail_current(&mut self) {
         if let Some(current) = self.current_phase {
-            if let Some(phase) = self.phases.get_mut(current) {
+            if let Some(phase) = self.phases.get_mut(current.index()) {
                 phase.fail();
             }
         }
+    }
+
+    pub fn back_to_implementation(&mut self) {
+        self.edit_cycle_count += 1;
+        let impl_idx = ViberPhase::Implementation.index();
+        if let Some(phase) = self.phases.get_mut(impl_idx) {
+            phase.status = PhaseStatus::InProgress;
+            phase.progress = 0;
+        }
+        self.current_phase = Some(ViberPhase::Implementation);
+        self.selected_index = impl_idx;
     }
 }
